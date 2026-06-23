@@ -78,7 +78,12 @@ public class Module {
     state.cosineScale(inputs.turnPosition);
 
     // Apply setpoints
-    io.setDriveVelocity(state.speedMetersPerSecond / constants.WheelRadius);
+    io.setDriveVelocity(
+        (state.speedMetersPerSecond / constants.WheelRadius)
+            // TODO: use turn position instead of velocity if possible
+            - (inputs.turnVelocityRadPerSec
+                * constants.CouplingGearRatio
+                / constants.DriveMotorGearRatio));
     io.setTurnPosition(state.angle);
   }
 
@@ -101,7 +106,11 @@ public class Module {
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * constants.WheelRadius;
+    return (inputs.drivePositionRad
+            + (inputs.turnPosition.getRadians()
+                * constants.CouplingGearRatio
+                / constants.DriveMotorGearRatio))
+        * constants.WheelRadius;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
