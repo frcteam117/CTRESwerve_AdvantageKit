@@ -147,4 +147,16 @@ public class Module {
   public double getFFCharacterizationVelocity() {
     return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
   }
+
+  public void setKVGain(double value) {
+    io.setKVGain(value);
+  }
+
+  public void setKPGain(double value) {
+    io.setKPGain(value);
+  }
+
+  public void setKDGain(double value) {
+    io.setKDGain(value);
+  }
 }

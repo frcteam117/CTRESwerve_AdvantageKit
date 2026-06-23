@@ -84,6 +84,8 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final StatusSignal<Voltage> turnAppliedVolts;
   private final StatusSignal<Current> turnCurrent;
 
+  private final TalonFXConfiguration driveConfig;
+
   // Connection debouncers
   private final Debouncer driveConnectedDebounce =
       new Debouncer(0.5, Debouncer.DebounceType.kFalling);
@@ -101,7 +103,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     cancoder = new CANcoder(constants.EncoderId, TunerConstants.kCANBus);
 
     // Configure drive motor
-    var driveConfig = constants.DriveMotorInitialConfigs;
+    driveConfig = constants.DriveMotorInitialConfigs;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
@@ -261,5 +263,23 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
               rotation.getRotations());
         });
+  }
+
+  @Override
+  public void setKPGain(double value) {
+    driveConfig.Slot0.kP = value;
+    driveTalon.getConfigurator().apply(driveConfig.Slot0);
+  }
+
+  @Override
+  public void setKDGain(double value) {
+    driveConfig.Slot0.kD = value;
+    driveTalon.getConfigurator().apply(driveConfig.Slot0);
+  }
+
+  @Override
+  public void setKVGain(double value) {
+    driveConfig.Slot0.kV = value;
+    driveTalon.getConfigurator().apply(driveConfig.Slot0);
   }
 }
