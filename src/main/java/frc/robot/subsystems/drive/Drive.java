@@ -43,6 +43,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.TunableDouble;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -98,6 +99,11 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
+  private TunableDouble driveKP =
+      new TunableDouble("Drive/drivekP", TunerConstants.BackLeft.DriveMotorGains.kP);
+  private TunableDouble driveKV =
+      new TunableDouble("Drive/drivekV", TunerConstants.BackLeft.DriveMotorGains.kV);
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -109,6 +115,9 @@ public class Drive extends SubsystemBase {
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
     modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
+
+    driveKP.runOnChange(this::setKPGain);
+    driveKV.runOnChange(this::setKVGain);
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -355,5 +364,23 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  public void setKPGain(double value) {
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setKPGain(value);
+    }
+  }
+
+  public void setKDGain(double value) {
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setKDGain(value);
+    }
+  }
+
+  public void setKVGain(double value) {
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setKVGain(value);
+    }
   }
 }
