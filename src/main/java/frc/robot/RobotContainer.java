@@ -27,6 +27,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -43,6 +47,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final RangeSubsystem range;
+  private final ElevatorSubsystem elevator;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -71,6 +76,8 @@ public class RobotContainer {
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
         range = new RangeSubsystem(new RangeIOCanRange());
+
+        elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -101,6 +108,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = null;
         range = null;
+
+        elevator = new ElevatorSubsystem(new ElevatorIOSim());
+
         break;
 
       default:
@@ -114,6 +124,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = null;
         range = new RangeSubsystem(new RangeIO() {});
+        elevator = new ElevatorSubsystem(new ElevatorIO() {});
         break;
     }
 
