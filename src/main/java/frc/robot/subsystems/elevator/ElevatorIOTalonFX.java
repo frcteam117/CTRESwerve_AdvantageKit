@@ -7,46 +7,20 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.TunerConstants;
-import org.littletonrobotics.junction.AutoLog;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX
       leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
   private final TalonFX
       followerTalon; // = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
-
-  @AutoLog
-  public static class ElevatorIOInputs {
-    public boolean connected = false;
-    public Angle positionRotations = Radians.of(0);
-    public AngularVelocity velocityRotationsPerSec = RotationsPerSecond.of(0);
-    public Voltage appliedVolts = Volts.of(0.0);
-    public Current currentAmps = Amps.of(0);
-
-    public boolean encoderConnected = false;
-    public Rotation2d absolutePosition = Rotation2d.kZero;
-
-    public double[] odometryTimestamps = new double[] {};
-    public Angle[] odometryPositionsRotations = new Angle[] {};
-  }
 
   public ElevatorIOTalonFX() {
     leaderTalon = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
@@ -87,11 +61,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // Update elevator inputs
     // should these all be doubles bc its simpler?
     inputs.connected = true;
-    inputs.positionRotations = leaderTalon.getPosition().getValue();
-    inputs.velocityRotationsPerSec = leaderTalon.getVelocity().getValue();
-    inputs.appliedVolts = leaderTalon.getSupplyVoltage().getValue();
-    // TODO: why.. tf does it not know what amps are
-    inputs.currentAmps = leaderTalon.getSupplyCurrent().getValue().abs(Units.Amps);
+    inputs.positionRotations = leaderTalon.getPosition().getValueAsDouble();
+    inputs.velocityRotationsPerSec = leaderTalon.getVelocity().getValueAsDouble();
+    inputs.appliedVolts = leaderTalon.getSupplyVoltage().getValueAsDouble();
+    inputs.currentAmps = Math.abs(leaderTalon.getSupplyCurrent().getValueAsDouble());
     // TODO: does the encoder need separate stuff if its internal?
     // inputs.encoderConnected = true;
     // inputs.absolutePosition = new Rotation2d(leaderTalon.getAngularPositionRad());
@@ -99,7 +72,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't
     // matter)
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
-    inputs.odometryPositionsRotations = new Angle[] {inputs.positionRotations};
+    inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
   }
 
   //   @Override
@@ -108,13 +81,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   //     elevatorAppliedVolts = output;
   //   }
 
-  //   @Override
-  //   public void setVelocity(double velocityRadPerSec) {
-  //     elevatorClosedLoop = true;
-  //     elevatorFFVolts = elevator_KS * Math.signum(velocityRadPerSec) + elevator_KV *
-  // velocityRadPerSec;
-  //     elevatorController.setSetpoint(velocityRadPerSec);
-  //   }
+  @Override
+  public void setVelocity(double velocityRotationsPerSec) {
+    VelocityVoltage velocityRequest = new VelocityVoltage(velocityRotationsPerSec);
+
+    leaderTalon.setControl(velocityRequest);
+  }
+
+  @Override
   public void setPosition(double rotations) {
     // create a Motion Magic request, voltage output
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);

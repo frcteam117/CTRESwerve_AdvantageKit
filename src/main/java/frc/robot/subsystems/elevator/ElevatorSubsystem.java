@@ -14,7 +14,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.io = io;
   }
 
+  @Override
   public void periodic() {
+    io.updateInputs(inputs);
+  }
+
+  public void simulationPeriodic() {
     io.updateInputs(inputs);
   }
 
@@ -38,6 +43,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     return elevator.run(
         () -> {
           io.setPosition(0);
+        });
+  }
+
+  public Command Stop(ElevatorSubsystem elevator) {
+    return elevator.run(
+        () -> {
+          io.setVelocity(0);
         });
   }
 }

@@ -13,9 +13,22 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ElevatorIO {
   @AutoLog
   public static class ElevatorIOInputs {
+    // changed to doubles because the autologging cant process non-doubles
+    // public boolean connected = false;
+    // public Angle positionRotations = Radians.of(0);
+    // public AngularVelocity velocityRotationsPerSec = RotationsPerSecond.of(0);
+    // public Voltage appliedVolts = Volts.of(0.0);
+    // public Current currentAmps = Amps.of(0);
+
+    // public boolean encoderConnected = false;
+    // public Rotation2d absolutePosition = Rotation2d.kZero;
+
+    // public double[] odometryTimestamps = new double[] {};
+    // public Angle[] odometryPositionsRotations = new Angle[] {};
+
     public boolean connected = false;
     public double positionRotations = 0.0;
-    public double velocityRadPerSec = 0.0;
+    public double velocityRotationsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
 
@@ -37,6 +50,8 @@ public interface ElevatorIO {
 
   /** request rotation amount */
   public default void setPosition(double rotations) {}
+
+  public default void setVelocity(double velocityRadPerSec) {}
 
   // public default void setKPGain(double value) {}
 

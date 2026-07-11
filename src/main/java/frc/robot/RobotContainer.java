@@ -28,7 +28,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorIO;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
+// UNCOMMENT WHEN USING:
+// import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.vision.Vision;
@@ -108,8 +109,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = null;
         range = null;
-
-        elevator = new ElevatorSubsystem(new ElevatorIOSim());
+        // TODO: vvv implement real sim IO
+        elevator =
+            new ElevatorSubsystem(
+                new ElevatorIO() {}); // new ElevatorSubsystem(new ElevatorIOSim());
 
         break;
 
