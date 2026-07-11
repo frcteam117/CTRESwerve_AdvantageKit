@@ -28,8 +28,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorIO;
-// UNCOMMENT WHEN USING:
-// import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.vision.Vision;
@@ -112,7 +111,7 @@ public class RobotContainer {
         // TODO: vvv implement real sim IO
         elevator =
             new ElevatorSubsystem(
-                new ElevatorIO() {}); // new ElevatorSubsystem(new ElevatorIOSim());
+                new ElevatorIOSim()); // new ElevatorSubsystem(new ElevatorIOSim());
 
         break;
 
@@ -192,6 +191,10 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+    //
+    controller.povUp().onTrue(elevator.ElevatorUp(elevator));
+    controller.povRight().onTrue(elevator.ElevatorMid(elevator));
+    controller.povDown().onTrue(elevator.ElevatorDown(elevator));
   }
 
   /**

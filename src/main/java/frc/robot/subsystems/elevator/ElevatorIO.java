@@ -7,7 +7,9 @@
 
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -52,6 +54,15 @@ public interface ElevatorIO {
   public default void setPosition(double rotations) {}
 
   public default void setVelocity(double velocityRadPerSec) {}
+
+  // is this a safe way to do this? vvv
+  public default TalonFXSimState getTalonSimState() {
+    return null;
+  }
+
+  public default DCMotorSim getTalonSimModel() {
+    return null;
+  }
 
   // public default void setKPGain(double value) {}
 

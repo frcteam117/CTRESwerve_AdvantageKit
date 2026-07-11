@@ -28,7 +28,7 @@ import org.littletonrobotics.junction.Logger;
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
-  private final VisionIOInputs[] inputs;
+  private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
@@ -36,7 +36,7 @@ public class Vision extends SubsystemBase {
     this.io = io;
 
     // Initialize inputs
-    this.inputs = new VisionIOInputs[io.length];
+    this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputs();
     }
@@ -63,7 +63,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
-      // Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
     }
 
     // Initialize logging values

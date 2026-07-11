@@ -1,139 +1,137 @@
-// // Copyright (c) 2021-2026 Littleton Robotics
-// // http://github.com/Mechanical-Advantage
-// //
-// // Use of this source code is governed by a BSD
-// // license that can be found in the LICENSE file
-// // at the root directory of this project.
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
 
-// package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.elevator;
 
-// import static edu.wpi.first.units.Units.Amps;
-// import static edu.wpi.first.units.Units.Radians;
-// import static edu.wpi.first.units.Units.RotationsPerSecond;
-// import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Rotations;
 
-// import com.ctre.phoenix6.configs.TalonFXConfiguration;
-// import com.ctre.phoenix6.controls.Follower;
-// import com.ctre.phoenix6.controls.MotionMagicVoltage;
-// import com.ctre.phoenix6.controls.VelocityVoltage;
-// import com.ctre.phoenix6.hardware.TalonFX;
-// import com.ctre.phoenix6.signals.MotorAlignmentValue;
-// import com.ctre.phoenix6.sim.ChassisReference;
-// import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.TunerConstants;
 
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.system.plant.DCMotor;
-// import edu.wpi.first.math.system.plant.LinearSystemId;
-// import edu.wpi.first.math.util.Units;
-// import edu.wpi.first.units.measure.Angle;
-// import edu.wpi.first.units.measure.AngularVelocity;
-// import edu.wpi.first.units.measure.Current;
-// import edu.wpi.first.units.measure.Voltage;
-// import edu.wpi.first.wpilibj.Timer;
-// import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-// import frc.robot.TunerConstants;
-// import org.littletonrobotics.junction.AutoLog;
+public class ElevatorIOSim implements ElevatorIO {
+  // it feels weird to init the real motors in the sim class???
+  // TODO: is this safe???? its what was in the docs!
+  private final TalonFX
+      leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
+  // private final TalonFX
+  //     followerTalon; // = new TalonFX(ElevatorConstants.followerCANID,
+  // TunerConstants.kCANBus);
 
-// public class ElevatorIOSim implements ElevatorIO {
-//   // it feels weird to init the real motors in the sim class???
-//   // TODO: is this safe???? its what was in the docs!
-//   private final TalonFX
-//       leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
-//   // private final TalonFX
-//   //     followerTalon; // = new TalonFX(ElevatorConstants.followerCANID,
-// TunerConstants.kCANBus);
+  private final DCMotorSim talonSimModel =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              DCMotor.getKrakenX60Foc(1), 0.001, ElevatorConstants.gear_ratio),
+          DCMotor.getKrakenX60Foc(1));
+  // TalonFXSimState rightTalonFXSim;// = leaderTalon.getSimState();
 
-//   private final DCMotorSim talonSimModel = new DCMotorSim(
-//    LinearSystemId.createDCMotorSystem(
-//       DCMotor.getKrakenX60Foc(1), 0.001, ElevatorConstants.gear_ratio
-//    ),
-//       DCMotor.getKrakenX60Foc(1)
-//   );
-//   //TalonFXSimState rightTalonFXSim;// = leaderTalon.getSimState();
+  public ElevatorIOSim() {
+    leaderTalon = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
+    // followerTalon = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
 
-//   public ElevatorIOSim() {
-//     leaderTalon = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
-//     // followerTalon = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
+    // followerTalon.setControl(
+    //     new Follower(ElevatorConstants.leaderCANID, MotorAlignmentValue.Aligned));
 
-//     // followerTalon.setControl(
-//     //     new Follower(ElevatorConstants.leaderCANID, MotorAlignmentValue.Aligned));
+    // talonFXSim = leaderTalon.getSimState();
 
-//     //talonFXSim = leaderTalon.getSimState();
+    var talonFXConfigs = new TalonFXConfiguration();
 
-//     var talonFXConfigs = new TalonFXConfiguration();
+    // set slot 0 gains
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
 
-//     // set slot 0 gains
-//     var slot0Configs = talonFXConfigs.Slot0;
-//     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
-//     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-//     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-//     slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-//     slot0Configs.kI = 0; // no output for integrated error
-//     slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    // set Motion Magic settings
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration =
+        160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
-//     // set Motion Magic settings
-//     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-//     motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-//     motionMagicConfigs.MotionMagicAcceleration =
-//         160; // Target acceleration of 160 rps/s (0.5 seconds)
-//     motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    leaderTalon.getConfigurator().apply(talonFXConfigs);
+    // followerTalon.getConfigurator().apply(talonFXConfigs);
 
-//     leaderTalon.getConfigurator().apply(talonFXConfigs);
-//     // followerTalon.getConfigurator().apply(talonFXConfigs);
+    var talonFXSim = leaderTalon.getSimState();
+    talonFXSim.Orientation = ChassisReference.CounterClockwise_Positive;
+    talonFXSim.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+  }
 
-//     var talonFXSim = leaderTalon.getSimState();
-//     talonFXSim.Orientation = ChassisReference.CounterClockwise_Positive;
-//     talonFXSim.setMotorType(TalonFXSimState.MotorType.KrakenX60);
-//   }
+  @Override
+  public void updateInputs(ElevatorIOInputs inputs) {
+    // var talonFXSim = leaderTalon.getSimState();
 
-//   @Override
-//   public void updateInputs(ElevatorIOInputs inputs) {
-//     var talonFXSim = leaderTalon.getSimState();
+    // Update simulation state
+    // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
+    // elevatorSim.update(0.02);
 
-//     // Update simulation state
-//     // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
-//     // elevatorSim.update(0.02);
+    // inputs.connected = true;
+    // inputs.positionRotations = talonFXSim.getPosition().getValue();
+    // inputs.velocityRotationsPerSec = talonFXSim.getVelocity().getValue();
+    // inputs.appliedVolts = talonFXSim.getSupplyVoltage().getValue();
+    // // -> should these be thru the simModel? theres no way to get these values from the
+    // TalonFXSimState class
+    // inputs.currentAmps = Math.abs(talonFXSim.getSupplyCurrent().getValueAsDouble());
+    // inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    // inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
 
-//     // Update elevator inputs
-//     // should these all be doubles bc its simpler?
-//     inputs.connected = true;
-//     inputs.positionRotations = talonFXSim.getPosition().getValue();
-//     inputs.velocityRotationsPerSec = leaderTalon.getVelocity().getValue();
-//     inputs.appliedVolts = leaderTalon.getSupplyVoltage().getValue();
-//     // TODO: why.. tf does it not know what amps are
-//     Current absAmps = Amps.of(Math.abs(leaderTalon.getSupplyCurrent().getValueAsDouble()));
-//     inputs.currentAmps = absAmps;
-//     // TODO: does the encoder need separate stuff if its internal?
-//     // inputs.encoderConnected = true;
-//     // inputs.absolutePosition = new Rotation2d(leaderTalon.getAngularPositionRad());
+    inputs.connected = true;
+    inputs.positionRotations = talonSimModel.getAngularPosition().in(Rotations);
+    // this is in RPS, is RPM better?
+    inputs.velocityRotationsPerSec =
+        talonSimModel.getAngularVelocityRPM() * 60; // convert RPM -> RPS
+    // the interwebs says appliedVolts is the same as InputVoltage here, i hope it's right
+    inputs.appliedVolts = talonSimModel.getInputVoltage();
+    inputs.currentAmps = Math.abs(talonSimModel.getCurrentDrawAmps());
+    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
+  }
 
-//     // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't
-//     // matter)
-//     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
-//     inputs.odometryPositionsRotations = new Angle[] {inputs.positionRotations};
-//   }
+  //   @Override
+  //   public void setOpenLoop(double output) {
+  //     elevatorClosedLoop = false;
+  //     elevatorAppliedVolts = output;
+  //   }
 
-//   //   @Override
-//   //   public void setOpenLoop(double output) {
-//   //     elevatorClosedLoop = false;
-//   //     elevatorAppliedVolts = output;
-//   //   }
+  @Override
+  public void setVelocity(double velocityRotationsPerSec) {
+    VelocityVoltage velocityRequest = new VelocityVoltage(velocityRotationsPerSec);
 
-//   @Override
-//   public void setVelocity(double velocityRotationsPerSec) {
-//         VelocityVoltage velocityRequest = new VelocityVoltage(velocityRotationsPerSec);
+    leaderTalon.setControl(velocityRequest);
+  }
 
-//         leaderTalon.setControl(velocityRequest);
-//     }
+  @Override
+  public void setPosition(double rotations) {
+    // create a Motion Magic request, voltage output
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
-//   @Override
-//   public void setPosition(double rotations) {
-//     // create a Motion Magic request, voltage output
-//     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    // configure using gear ratios on real elevator, then make specific commands
+    leaderTalon.setControl(m_request.withPosition(rotations));
+  }
 
-//     // configure using gear ratios on real elevator, then make specific commands
-//     leaderTalon.setControl(m_request.withPosition(rotations));
-//   }
-// }
+  // is this a safe way to do this? vvv
+  public TalonFXSimState getTalonSimState() {
+    return leaderTalon.getSimState();
+  }
+
+  public DCMotorSim getTalonSimModel() {
+    return talonSimModel;
+  }
+}
 // TODO: ask for help on the sim part, this IO structure isnt one im familiar
 // with and idk what is right/wrong

@@ -16,11 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import frc.robot.subsystems.drive.ModuleIO.ModuleIOInputs;
+import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private final ModuleIO io;
-  private final ModuleIOInputs inputs = new ModuleIOInputs();
+  // private final ModuleIOInputs inputs = new ModuleIOInputs();
+  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
   private final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
@@ -54,7 +55,7 @@ public class Module {
 
   public void periodic() {
     io.updateInputs(inputs);
-    // Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
 
     // Calculate positions for odometry
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
