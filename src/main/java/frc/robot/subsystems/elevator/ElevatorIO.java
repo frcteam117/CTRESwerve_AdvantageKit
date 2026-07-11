@@ -34,7 +34,7 @@ public interface ElevatorIO {
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
 
-    public boolean encoderConnected = false;
+    // public boolean encoderConnected = false;
     public Rotation2d absolutePosition = Rotation2d.kZero;
 
     public double[] odometryTimestamps = new double[] {};
