@@ -8,7 +8,6 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -35,7 +34,7 @@ public interface ElevatorIO {
     public double currentAmps = 0.0;
 
     // public boolean encoderConnected = false;
-    public Rotation2d absolutePosition = Rotation2d.kZero;
+    // public Rotation2d absolutePosition = Rotation2d.kZero;
 
     public double[] odometryTimestamps = new double[] {};
     public double[] odometryPositionsRotations = new double[] {};
