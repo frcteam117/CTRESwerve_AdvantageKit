@@ -8,6 +8,7 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -17,6 +18,7 @@ import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.TunerConstants;
@@ -74,7 +76,8 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
-    // var talonFXSim = leaderTalon.getSimState();
+    var talonFXSim = getTalonSimState();
+    var talonSimModel = getTalonSimModel();
 
     // Update simulation state
     // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
@@ -100,6 +103,26 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.currentAmps = Math.abs(talonSimModel.getCurrentDrawAmps());
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
+    //
+
+    // set the supply voltage of the TalonFX
+    talonFXSim.setSupplyVoltage(RobotController.getBatteryVoltage());
+
+    // get the motor voltage of the TalonFX
+    var motorVoltage = talonFXSim.getMotorVoltageMeasure();
+
+    // use the motor voltage to calculate new position and velocity
+    // using WPILib's DCMotorSim class for physics simulation
+    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    talonSimModel.update(0.020); // assume 20 ms loop time
+
+    // apply the new rotor position and velocity to the TalonFX;
+    // note that this is rotor position/velocity (before gear ratio), but
+    // DCMotorSim returns mechanism position/velocity (after gear ratio)
+    talonFXSim.setRawRotorPosition(
+        talonSimModel.getAngularPosition().times(ElevatorConstants.gear_ratio));
+    talonFXSim.setRotorVelocity(
+        talonSimModel.getAngularVelocity().times(ElevatorConstants.gear_ratio));
   }
 
   //   @Override
