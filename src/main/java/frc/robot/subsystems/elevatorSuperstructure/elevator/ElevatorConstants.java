@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
 public class ElevatorConstants {
   public static final int leaderCANID = 14;
