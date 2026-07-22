@@ -20,8 +20,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private final ModuleIO io;
-  // private final ModuleIOInputs inputs = new ModuleIOInputs();
-  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+  private final ModuleIOMutInputsAutoLogged inputs = new ModuleIOMutInputsAutoLogged();
   private final int index;
   private final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>

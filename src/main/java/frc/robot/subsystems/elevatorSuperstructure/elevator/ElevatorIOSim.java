@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.TunerConstants;
 
-public class ElevatorIOSim extends ElevatorMutIO {
+public class ElevatorIOSim implements ElevatorIO {
   // it feels weird to init the real motors in the sim class???
   // TODO: is this safe???? its what was in the docs!
   private final TalonFX
@@ -75,7 +75,7 @@ public class ElevatorIOSim extends ElevatorMutIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(ElevatorIOMutInputs inputs) {
     var talonFXSim = getTalonSimState();
     var talonSimModel = getTalonSimModel();
 

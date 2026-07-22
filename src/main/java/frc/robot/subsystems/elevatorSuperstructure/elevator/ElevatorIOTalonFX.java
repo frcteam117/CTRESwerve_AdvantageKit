@@ -16,7 +16,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.TunerConstants;
 
-public class ElevatorIOTalonFX extends ElevatorMutIO {
+public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX
       leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
   private final TalonFX
@@ -52,7 +52,7 @@ public class ElevatorIOTalonFX extends ElevatorMutIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(ElevatorIOMutInputs inputs) {
 
     // Update simulation state
     // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
