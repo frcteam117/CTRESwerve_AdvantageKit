@@ -163,7 +163,8 @@ public class RobotContainer {
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
+                () -> -controller.getRightY(),
+                () -> -controller.getRightX()));
 
     // Switch to X pattern when X button is pressed
     controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));

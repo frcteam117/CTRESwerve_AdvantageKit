@@ -23,19 +23,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.TunableDouble;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.4;
-  private static final double ANGLE_MAX_VELOCITY = 8.0;
-  private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private static final DoubleSupplier ANGLE_KP = new TunableDouble("Tuning/ANGLE_KP", 5.0);
+  private static final DoubleSupplier ANGLE_KD = new TunableDouble("Tuning/ANGLE_KD", 0.4);
+  private static final DoubleSupplier ANGLE_MAX_VELOCITY =
+      new TunableDouble("Tuning/ANGLE_MAX_VELOCITY", 8.0);
+  private static final DoubleSupplier ANGLE_MAX_ACCELERATION =
+      new TunableDouble("Tuning/ANGLE_MAX_ACCELERATION", 20.0);
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
@@ -96,6 +98,8 @@ public class DriveCommands {
         drive);
   }
 
+  private static Rotation2d rotTarget = Rotation2d.kZero;
+
   /**
    * Field relative drive command using joystick for linear control and PID for angular control.
    * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
@@ -105,28 +109,44 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      Supplier<Rotation2d> rotationSupplier) {
+      DoubleSupplier rotxSupplier,
+      DoubleSupplier rotySupplier) {
 
     // Create PID controller
     ProfiledPIDController angleController =
         new ProfiledPIDController(
-            ANGLE_KP,
+            ANGLE_KP.getAsDouble(),
             0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+            ANGLE_KD.getAsDouble(),
+            new TrapezoidProfile.Constraints(
+                ANGLE_MAX_VELOCITY.getAsDouble(), ANGLE_MAX_ACCELERATION.getAsDouble()));
     angleController.enableContinuousInput(-Math.PI, Math.PI);
+    rotTarget =
+        new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble()).getAngle();
 
     // Construct command
     return Commands.run(
             () -> {
+              angleController.setP(ANGLE_KP.getAsDouble());
+              angleController.setD(ANGLE_KD.getAsDouble());
+              angleController.setConstraints(
+                  new TrapezoidProfile.Constraints(
+                      ANGLE_MAX_VELOCITY.getAsDouble(), ANGLE_MAX_ACCELERATION.getAsDouble()));
+
               // Get linear velocity
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
+              Translation2d rotTargetVec =
+                  new Translation2d(rotxSupplier.getAsDouble(), rotySupplier.getAsDouble());
+              if (rotTargetVec.getNorm() > .15) {
+                rotTarget = rotTargetVec.getAngle();
+              }
+
               // Calculate angular speed
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+                      drive.getRotation().getRadians(), rotTarget.getRadians());
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =
