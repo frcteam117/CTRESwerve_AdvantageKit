@@ -1,9 +1,10 @@
 package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
-
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 public class SuperstructureSubsystem extends SubsystemBase{
     //private final ArmSubsystem arm;
     //private final ClawSubsystem claw;
@@ -53,5 +54,24 @@ public class SuperstructureSubsystem extends SubsystemBase{
         // arm.periodic();
         // claw.periodic();
         // wrist.periodic();
+    }
+
+    public Command ElevatorTop(SuperstructureSubsystem soup) {
+        return soup.run(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.topRotations);
+        });
+    }
+    public Command ElevatorMid(SuperstructureSubsystem soup) {
+        return soup.run(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.midRotations);
+        });
+    }
+    public Command ElevatorBottom(SuperstructureSubsystem soup) {
+        return soup.run(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
+        });
     }
 }

@@ -8,14 +8,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem {
 
-  private final ElevatorIO io;
+  private final ElevatorMutIO io;
   // private final ElevatorIOInputs inputs = new ElevatorIOInputs();
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 // we're just gonna trust that the other subsystems wont edit the io :3
-  public ElevatorSubsystem(ElevatorIO io) {
+  public ElevatorSubsystem(ElevatorMutIO io) {
     this.io = io;
   }
-
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);

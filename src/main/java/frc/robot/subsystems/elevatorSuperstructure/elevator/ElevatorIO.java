@@ -41,18 +41,7 @@ public interface ElevatorIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(ElevatorIOInputs inputs) {}
-
-  /** Run the drive motor at the specified open loop value. */
-  // public default void setDriveOpenLoop(double output) {}
-
-  /** Run the turn motor at the specified open loop value. */
-  // public default void setTurnOpenLoop(double output) {}
-
-  /** request rotation amount */
-  public default void setPosition(double rotations) {}
-
-  public default void setVelocity(double velocityRadPerSec) {}
+  //public default void updateInputs(ElevatorIOInputs inputs) {}
 
   // is this a safe way to do this? vvv
   public default TalonFXSimState getTalonSimState() {

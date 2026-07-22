@@ -16,7 +16,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.TunerConstants;
 
-public class ElevatorIOTalonFX implements ElevatorIO {
+public class ElevatorIOTalonFX extends ElevatorMutIO {
   private final TalonFX
       leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
   private final TalonFX
