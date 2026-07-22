@@ -1,6 +1,6 @@
 package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO.ElevatorIOInputs;
+// import frc.robot.subsystems.elevatorSuperstructure.*;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem {
@@ -18,11 +18,36 @@ public class ElevatorSubsystem {
     Logger.processInputs("Elevator", inputs);
   }
 
-  public ElevatorIOInputs getIOInputs() {
-    return inputs;
-  }
-
-  public ElevatorIO getIO() {
+  public ElevatorIO getIO() { // READ ONLY PRETTY PLS!!!
     return io;
   }
+  // TODO: ADJUST ONCE GEAR RATIOS ARE KNOWN!!!
+  // also idk if requesting every loop even when not moving is best? but we shall find out
+  // public Command ElevatorUp(ElevatorSubsystem elevator) {
+  //   return elevator.run(
+  //       () -> {
+  //         io.setPosition(100);
+  //       });
+  // }
+
+  // public Command ElevatorMid(ElevatorSubsystem elevator) {
+  //   return elevator.run(
+  //       () -> {
+  //         io.setPosition(50);
+  //       });
+  // }
+
+  // public Command ElevatorDown(ElevatorSubsystem elevator) {
+  //   return elevator.run(
+  //       () -> {
+  //         io.setPosition(0);
+  //       });
+  // }
+
+  // public Command Stop(ElevatorSubsystem elevator) {
+  //   return elevator.run(
+  //       () -> {
+  //         io.setVelocity(0);
+  //       });
+  // }
 }

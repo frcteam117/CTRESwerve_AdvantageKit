@@ -27,17 +27,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -51,7 +46,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final RangeSubsystem range;
-  //private final ElevatorSubsystem elevator;
+  // private final ElevatorSubsystem elevator;
   private final SuperstructureSubsystem soup;
 
   // Controller
@@ -86,7 +81,7 @@ public class RobotContainer {
 
         range = new RangeSubsystem(new RangeIOCanRange());
         soup = new SuperstructureSubsystem();
-        //elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
+        // elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -115,7 +110,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-         vision =
+        vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(
@@ -125,7 +120,7 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
         range = null;
-        
+
         soup = new SuperstructureSubsystem();
 
         // TODO: vvv implement real sim IO
@@ -144,14 +139,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        vision = new Vision(
-                drive::addVisionMeasurement,
-                new VisionIO[] {});
-       
+        vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
+
         range = new RangeSubsystem(new RangeIO() {});
         soup = new SuperstructureSubsystem();
 
-        //elevator = new ElevatorSubsystem(new ElevatorIO() {});
+        // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         break;
     }
 
@@ -216,7 +209,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
-    
+
     controller.povUp().onTrue(soup.ElevatorTop(soup));
     controller.povRight().onTrue(soup.ElevatorMid(soup));
     controller.povDown().onTrue(soup.ElevatorBottom(soup));
