@@ -10,4 +10,5 @@ public class ElevatorConstants {
 
   public static final double gear_ratio =
       1; // TODO: change, and add rads -> mps conversion to elevator inputs
+  public static final double mechanismMOI = 5.0; // kg*m^2
 }

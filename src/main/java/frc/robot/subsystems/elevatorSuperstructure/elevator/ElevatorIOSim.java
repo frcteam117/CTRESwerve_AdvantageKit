@@ -14,6 +14,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -35,8 +36,11 @@ public class ElevatorIOSim implements ElevatorIO {
   private final DCMotorSim talonSimModel =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              DCMotor.getKrakenX60Foc(1), 0.001, ElevatorConstants.gear_ratio),
+              DCMotor.getKrakenX60Foc(1),
+              ElevatorConstants.mechanismMOI,
+              ElevatorConstants.gear_ratio),
           DCMotor.getKrakenX60Foc(1));
+
   // TalonFXSimState rightTalonFXSim;// = leaderTalon.getSimState();
 
   public ElevatorIOSim() {
@@ -55,9 +59,11 @@ public class ElevatorIOSim implements ElevatorIO {
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kP = 2.0; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
-    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    slot0Configs.kD = 0.025; // A velocity error of 1 rps results in 0.1 V output
+    slot0Configs.kG = 0.4;
+    slot0Configs.GravityType = GravityTypeValue.valueOf(0);
 
     // set Motion Magic settings
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
@@ -95,6 +101,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     inputs.connected = true;
     inputs.positionRotations = talonSimModel.getAngularPosition().in(Rotations);
+
     // this is in RPS, is RPM better?
     inputs.velocityRotationsPerSec =
         talonSimModel.getAngularVelocityRPM() * 60; // convert RPM -> RPS
@@ -104,8 +111,8 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
     //
-
     // set the supply voltage of the TalonFX
+
     talonFXSim.setSupplyVoltage(RobotController.getBatteryVoltage());
 
     // get the motor voltage of the TalonFX
@@ -113,7 +120,17 @@ public class ElevatorIOSim implements ElevatorIO {
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    // TODO: add hardstops to non sim IO
+    // also is this a good way to do the voltage? idk
+    if (inputs.positionRotations > ElevatorConstants.topRotations) {
+      inputs.positionRotations = ElevatorConstants.topRotations;
+      talonSimModel.setInputVoltage(0);
+    } else if (inputs.positionRotations < ElevatorConstants.bottomRotations) {
+      inputs.positionRotations = ElevatorConstants.bottomRotations;
+      talonSimModel.setInputVoltage(0);
+    } else {
+      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    }
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;
