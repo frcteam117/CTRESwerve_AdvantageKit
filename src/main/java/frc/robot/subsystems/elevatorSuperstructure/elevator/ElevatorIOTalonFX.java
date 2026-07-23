@@ -54,12 +54,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorMutInputs inputs) {
 
-    // Update simulation state
-    // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
-    // elevatorSim.update(0.02);
-
     // Update elevator inputs
-    // should these all be doubles bc its simpler?
     inputs.connected = true;
     inputs.positionRotations = leaderTalon.getPosition().getValueAsDouble();
     inputs.velocityRotationsPerSec = leaderTalon.getVelocity().getValueAsDouble();

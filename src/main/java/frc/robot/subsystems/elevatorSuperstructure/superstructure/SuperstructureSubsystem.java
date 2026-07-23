@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureIO.SuperstructureInputs;
 
 public class SuperstructureSubsystem extends SubsystemBase {
@@ -25,6 +26,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
   public void periodic() {
     elevator.periodic();
     // arm.periodic();
+    // claw.periodic();
     // wrist.periodic();
   }
 
