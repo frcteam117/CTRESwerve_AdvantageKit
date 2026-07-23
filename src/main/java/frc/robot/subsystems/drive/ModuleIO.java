@@ -8,11 +8,45 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
+  public static interface ModuleIOInputs {
+    public boolean isDriveConnected();
+
+    public double getDrivePositionRad();
+
+    public double getDriveVelocityRadPerSec();
+
+    public double getDriveAppliedVolts();
+
+    public double getDriveCurrentAmps();
+
+    public boolean isTurnConnected();
+
+    public boolean isTurnEncoderConnected();
+
+    public Rotation2d getTurnAbsolutePosition();
+
+    public Rotation2d getTurnPosition();
+
+    public double getTurnVelocityRadPerSec();
+
+    public double getTurnAppliedVolts();
+
+    public double getTurnCurrentAmps();
+
+    public double[] getOdometryTimestamps();
+
+    public double[] getOdometryDrivePositionsRad();
+
+    public Rotation2d[] getOdometryTurnPositions();
+  }
+
+  @Getter
   @AutoLog
-  public static class ModuleIOInputs {
+  public static class ModuleIOMutInputs implements ModuleIOInputs {
     public boolean driveConnected = false;
     public double drivePositionRad = 0.0;
     public double driveVelocityRadPerSec = 0.0;
@@ -33,7 +67,7 @@ public interface ModuleIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(ModuleIOInputs inputs) {}
+  public default void updateInputs(ModuleIOMutInputs inputs) {}
 
   /** Run the drive motor at the specified open loop value. */
   public default void setDriveOpenLoop(double output) {}

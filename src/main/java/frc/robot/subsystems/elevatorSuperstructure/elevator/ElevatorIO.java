@@ -7,26 +7,32 @@
 
 package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
+  public static interface ElevatorIOInputs {
+    public boolean isConnected();
+
+    public double getPositionRotations();
+
+    public double getVelocityRotationsPerSec();
+
+    public double getAppliedVolts();
+
+    public double getCurrentAmps();
+
+    // public boolean getEncoderConnected();
+    // public Rotation2d getAbsolutePosition();
+
+    public double[] getOdometryTimestamps();
+
+    public double[] getOdometryPositionsRotations();
+  }
+
+  @Getter
   @AutoLog
-  public static class ElevatorIOInputs {
-    // changed to doubles because the autologging cant process non-doubles
-    // public boolean connected = false;
-    // public Angle positionRotations = Radians.of(0);
-    // public AngularVelocity velocityRotationsPerSec = RotationsPerSecond.of(0);
-    // public Voltage appliedVolts = Volts.of(0.0);
-    // public Current currentAmps = Amps.of(0);
-
-    // public boolean encoderConnected = false;
-    // public Rotation2d absolutePosition = Rotation2d.kZero;
-
-    // public double[] odometryTimestamps = new double[] {};
-    // public Angle[] odometryPositionsRotations = new Angle[] {};
-
+  public static class ElevatorIOMutInputs implements ElevatorIOInputs {
     public boolean connected = false;
     public double positionRotations = 0.0;
     public double velocityRotationsPerSec = 0.0;
@@ -41,31 +47,10 @@ public interface ElevatorIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(ElevatorIOInputs inputs) {}
-
-  /** Run the drive motor at the specified open loop value. */
-  // public default void setDriveOpenLoop(double output) {}
-
-  /** Run the turn motor at the specified open loop value. */
-  // public default void setTurnOpenLoop(double output) {}
+  public default void updateInputs(ElevatorIOMutInputs inputs) {}
 
   /** request rotation amount */
   public default void setPosition(double rotations) {}
 
   public default void setVelocity(double velocityRadPerSec) {}
-
-  // is this a safe way to do this? vvv
-  public default TalonFXSimState getTalonSimState() {
-    return null;
-  }
-
-  public default DCMotorSim getTalonSimModel() {
-    return null;
-  }
-
-  // public default void setKPGain(double value) {}
-
-  // public default void setKDGain(double value) {}
-
-  // public default void setKVGain(double value) {}
 }

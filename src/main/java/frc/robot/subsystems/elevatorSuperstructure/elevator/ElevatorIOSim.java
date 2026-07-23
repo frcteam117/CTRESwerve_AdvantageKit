@@ -75,7 +75,7 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(ElevatorIOMutInputs inputs) {
     var talonFXSim = getTalonSimState();
     var talonSimModel = getTalonSimModel();
 
