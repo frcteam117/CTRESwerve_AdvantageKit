@@ -27,7 +27,7 @@ import org.littletonrobotics.junction.Logger;
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
-  private final VisionIOInputsAutoLogged[] inputs;
+  private final VisionMutInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
@@ -35,9 +35,9 @@ public class Vision extends SubsystemBase {
     this.io = io;
 
     // Initialize inputs
-    this.inputs = new VisionIOInputsAutoLogged[io.length];
+    this.inputs = new VisionMutInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
-      inputs[i] = new VisionIOInputsAutoLogged();
+      inputs[i] = new VisionMutInputsAutoLogged();
     }
 
     // Initialize disconnected alerts

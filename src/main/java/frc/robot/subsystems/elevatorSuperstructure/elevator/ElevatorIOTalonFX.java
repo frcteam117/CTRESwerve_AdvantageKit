@@ -52,7 +52,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOMutInputs inputs) {
+  public void updateInputs(ElevatorMutInputs inputs) {
 
     // Update simulation state
     // elevatorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));

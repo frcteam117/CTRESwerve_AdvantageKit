@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
-  public static interface ElevatorIOInputs {
+  public static interface ElevatorInputs {
     public boolean isConnected();
 
     public double getPositionRotations();
@@ -32,7 +32,7 @@ public interface ElevatorIO {
 
   @Getter
   @AutoLog
-  public static class ElevatorIOMutInputs implements ElevatorIOInputs {
+  public static class ElevatorMutInputs implements ElevatorInputs {
     public boolean connected = false;
     public double positionRotations = 0.0;
     public double velocityRotationsPerSec = 0.0;
@@ -47,7 +47,7 @@ public interface ElevatorIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(ElevatorIOMutInputs inputs) {}
+  public default void updateInputs(ElevatorMutInputs inputs) {}
 
   /** request rotation amount */
   public default void setPosition(double rotations) {}
