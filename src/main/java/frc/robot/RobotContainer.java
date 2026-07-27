@@ -27,6 +27,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
@@ -45,6 +46,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // for var loading:
+  private final ElevatorConstants elevatorConstants = new ElevatorConstants();
   // Subsystems
   private final Drive drive;
   private final Vision vision;
@@ -214,9 +217,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.povUp().onTrue(soup.ElevatorTop(soup));
-    controller.povRight().onTrue(soup.ElevatorMid(soup));
-    controller.povDown().onTrue(soup.ElevatorBottom(soup));
+    controller.povUp().whileTrue(soup.ElevatorTop(soup));
+    controller.povRight().whileTrue(soup.ElevatorMid(soup));
+    controller.povDown().whileTrue(soup.ElevatorBottom(soup));
   }
 
   /**
