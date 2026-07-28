@@ -1,0 +1,58 @@
+package frc.robot.subsystems.elevatorSuperstructure.superstructure;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
+import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureIO.SuperstructureInputs;
+
+public class SuperstructureSubsystem extends SubsystemBase {
+
+  private final ElevatorSubsystem elevator;
+  // private final ArmSubsystem arm;
+  // private final WristSubsystem wrist;
+
+  private final SuperstructureInputs inputs;
+
+  public SuperstructureSubsystem(ElevatorIO elevatorIO /*, ArmIO armIO, WristIO wristIO */) {
+    // System.out.println("HIJK " + ElevatorConstants.talonFXConfigs.Slot0.kS);
+    elevator = new ElevatorSubsystem(elevatorIO);
+    // arm = new ArmSubsystem(armIO);
+    // wrist = new WristSubsystem(wristIO);
+
+    inputs =
+        new SuperstructureInputs(elevator.getInputs() /*, arm.getInputs(), wrist.getInputs() */);
+  }
+
+  @Override
+  public void periodic() {
+    elevator.periodic();
+    // arm.periodic();
+    // claw.periodic();
+    // wrist.periodic();
+  }
+
+  public SuperstructureInputs getInputs() {
+    return inputs;
+  }
+
+  public Command ElevatorTop(SuperstructureSubsystem soup) {
+    return soup.runOnce(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.topRotations);
+        });
+  }
+
+  public Command ElevatorMid(SuperstructureSubsystem soup) {
+    return soup.runOnce(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.midRotations);
+        });
+  }
+
+  public Command ElevatorBottom(SuperstructureSubsystem soup) {
+    return soup.runOnce(
+        () -> {
+          elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
+        });
+  }
+}

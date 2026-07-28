@@ -5,12 +5,11 @@
 // license that can be found in the LICENSE file
 // at the root directory of this project.
 
-package frc.robot.subsystems.elevatorSuperstructure.elevator;
+package frc.robot.subsystems.claw;
 
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -22,11 +21,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.TunerConstants;
 
-public class ElevatorIOSim implements ElevatorIO {
+public class ClawIOSim implements ClawIO {
   // it feels weird to init the real motors in the sim class???
   // TODO: is this safe???? its what was in the docs!
   private final TalonFX
-      leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
+      talon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
   // private final TalonFX
   //     followerTalon; // = new TalonFX(ElevatorConstants.followerCANID,
   // TunerConstants.kCANBus);
@@ -34,32 +33,40 @@ public class ElevatorIOSim implements ElevatorIO {
   private final DCMotorSim talonSimModel =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              DCMotor.getKrakenX60Foc(1),
-              ElevatorConstants.mechanismMOI,
-              ElevatorConstants.gear_ratio),
+              DCMotor.getKrakenX60Foc(1), 0.001, ClawConstants.gearRatio),
           DCMotor.getKrakenX60Foc(1));
-
   // TalonFXSimState rightTalonFXSim;// = leaderTalon.getSimState();
 
-  public ElevatorIOSim() {
-    leaderTalon = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
+  public ClawIOSim() {
+    talon = new TalonFX(ClawConstants.motorCANID, TunerConstants.kCANBus);
     // followerTalon = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
 
     // followerTalon.setControl(
     //     new Follower(ElevatorConstants.leaderCANID, MotorAlignmentValue.Aligned));
 
     // talonFXSim = leaderTalon.getSimState();
-    // System.out.println("HIJK2 " + ElevatorConstants.talonFXConfigs.Slot0.kS);
-    leaderTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
+
+    var talonFXConfigs = new TalonFXConfiguration();
+
+    // set slot 0 gains
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+
+    talon.getConfigurator().apply(talonFXConfigs);
     // followerTalon.getConfigurator().apply(talonFXConfigs);
 
-    var talonFXSim = leaderTalon.getSimState();
+    var talonFXSim = talon.getSimState();
     talonFXSim.Orientation = ChassisReference.CounterClockwise_Positive;
     talonFXSim.setMotorType(TalonFXSimState.MotorType.KrakenX60);
   }
 
   @Override
-  public void updateInputs(ElevatorMutInputs inputs) {
+  public void updateInputs(ClawIOInputs inputs) {
     var talonFXSim = getTalonSimState();
     var talonSimModel = getTalonSimModel();
 
@@ -78,19 +85,15 @@ public class ElevatorIOSim implements ElevatorIO {
     // inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
 
     inputs.connected = true;
-    inputs.positionRotations = talonSimModel.getAngularPosition().in(Rotations);
-
     // this is in RPS, is RPM better?
     inputs.velocityRotationsPerSec =
-        talonSimModel.getAngularVelocityRPM() / 60; // convert RPM -> RPS
+        talonSimModel.getAngularVelocityRPM() * 60; // convert RPM -> RPS
     // the interwebs says appliedVolts is the same as InputVoltage here, i hope it's right
     inputs.appliedVolts = talonSimModel.getInputVoltage();
     inputs.currentAmps = Math.abs(talonSimModel.getCurrentDrawAmps());
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
-    inputs.odometryPositionsRotations = new double[] {inputs.positionRotations};
-    //
-    // set the supply voltage of the TalonFX
 
+    // set the supply voltage of the TalonFX
     talonFXSim.setSupplyVoltage(RobotController.getBatteryVoltage());
 
     // get the motor voltage of the TalonFX
@@ -98,26 +101,15 @@ public class ElevatorIOSim implements ElevatorIO {
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    // TODO: add hardstops to non sim IO
-    // also is this a good way to do the voltage? idk
-    if (inputs.positionRotations > ElevatorConstants.topRotations) {
-      inputs.positionRotations = ElevatorConstants.topRotations;
-      talonSimModel.setInputVoltage(0);
-    } else if (inputs.positionRotations < ElevatorConstants.bottomRotations) {
-      inputs.positionRotations = ElevatorConstants.bottomRotations;
-      talonSimModel.setInputVoltage(0);
-    } else {
-      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-    }
+    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;
     // note that this is rotor position/velocity (before gear ratio), but
     // DCMotorSim returns mechanism position/velocity (after gear ratio)
     talonFXSim.setRawRotorPosition(
-        talonSimModel.getAngularPosition().times(ElevatorConstants.gear_ratio));
-    talonFXSim.setRotorVelocity(
-        talonSimModel.getAngularVelocity().times(ElevatorConstants.gear_ratio));
+        talonSimModel.getAngularPosition().times(ClawConstants.gearRatio));
+    talonFXSim.setRotorVelocity(talonSimModel.getAngularVelocity().times(ClawConstants.gearRatio));
   }
 
   //   @Override
@@ -130,21 +122,12 @@ public class ElevatorIOSim implements ElevatorIO {
   public void setVelocity(double velocityRotationsPerSec) {
     VelocityVoltage velocityRequest = new VelocityVoltage(velocityRotationsPerSec);
 
-    leaderTalon.setControl(velocityRequest);
-  }
-
-  @Override
-  public void setPosition(double rotations) {
-    // create a Motion Magic request, voltage output
-    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-
-    // configure using gear ratios on real elevator, then make specific commands
-    leaderTalon.setControl(m_request.withPosition(rotations));
+    talon.setControl(velocityRequest);
   }
 
   // is this a safe way to do this? vvv
   public TalonFXSimState getTalonSimState() {
-    return leaderTalon.getSimState();
+    return talon.getSimState();
   }
 
   public DCMotorSim getTalonSimModel() {

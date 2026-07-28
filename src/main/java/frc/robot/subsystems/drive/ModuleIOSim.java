@@ -68,7 +68,7 @@ public class ModuleIOSim implements ModuleIO {
   }
 
   @Override
-  public void updateInputs(ModuleIOInputs inputs) {
+  public void updateInputs(ModuleMutInputs inputs) {
     // Run closed-loop control
     if (driveClosedLoop) {
       driveAppliedVolts =

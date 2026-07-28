@@ -35,7 +35,7 @@ public class VisionIOPhotonVision implements VisionIO {
   }
 
   @Override
-  public void updateInputs(VisionIOInputs inputs) {
+  public void updateInputs(VisionMutInputs inputs) {
     inputs.connected = camera.isConnected();
 
     // Read new camera observations

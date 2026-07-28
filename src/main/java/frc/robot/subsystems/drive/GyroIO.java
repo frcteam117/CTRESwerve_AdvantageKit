@@ -8,11 +8,25 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface GyroIO {
+  public static interface GyroInputs {
+    public boolean isConnected();
+
+    public Rotation2d getYawPosition();
+
+    public double getYawVelocityRadPerSec();
+
+    public double[] getOdometryYawTimestamps();
+
+    public Rotation2d[] getOdometryYawPositions();
+  }
+
+  @Getter
   @AutoLog
-  public static class GyroIOInputs {
+  public static class GyroMutInputs implements GyroInputs {
     public boolean connected = false;
     public Rotation2d yawPosition = Rotation2d.kZero;
     public double yawVelocityRadPerSec = 0.0;
@@ -20,5 +34,5 @@ public interface GyroIO {
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
-  public default void updateInputs(GyroIOInputs inputs) {}
+  public default void updateInputs(GyroMutInputs inputs) {}
 }
