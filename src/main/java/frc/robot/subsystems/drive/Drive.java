@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -81,8 +82,7 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
-  // private final GyroIOInputs gyroInputs = new GyroIOInputs();
-  private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private final GyroMutInputsAutoLogged gyroInputs = new GyroMutInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
   private final Alert gyroDisconnectedAlert =
@@ -184,14 +184,14 @@ public class Drive extends SubsystemBase {
 
     // Update odometry
     double[] sampleTimestamps =
-        modules[0].getOdometryTimestamps(); // All signals are sampled together
+        modules[0].getInputs().getOdometryTimestamps(); // All signals are sampled together
     int sampleCount = sampleTimestamps.length;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        modulePositions[moduleIndex] = modules[moduleIndex].getInputs().getOdometryPositions()[i];
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
                 modulePositions[moduleIndex].distanceMeters
@@ -284,7 +284,7 @@ public class Drive extends SubsystemBase {
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
-      states[i] = modules[i].getState();
+      states[i] = modules[i].getInputs().getState();
     }
     return states;
   }
@@ -293,7 +293,7 @@ public class Drive extends SubsystemBase {
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
-      states[i] = modules[i].getPosition();
+      states[i] = modules[i].getInputs().getPosition();
     }
     return states;
   }
@@ -308,7 +308,7 @@ public class Drive extends SubsystemBase {
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];
     for (int i = 0; i < 4; i++) {
-      values[i] = modules[i].getWheelRadiusCharacterizationPosition();
+      values[i] = modules[i].getInputs().getDrivePositionRad();
     }
     return values;
   }
@@ -317,7 +317,7 @@ public class Drive extends SubsystemBase {
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
     for (int i = 0; i < 4; i++) {
-      output += modules[i].getFFCharacterizationVelocity() / 4.0;
+      output += modules[i].getInputs().getFFCharacterizationVelocity() / 4.0;
     }
     return output;
   }
@@ -349,7 +349,9 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)
+        * RobotController.getBatteryVoltage()
+        / 12;
   }
 
   /** Returns the maximum angular speed in radians per sec. */

@@ -31,6 +31,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -46,6 +50,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // for var loading:
+  private final ElevatorConstants elevatorConstants = new ElevatorConstants();
   // Subsystems
   private final Drive drive;
   private final Vision vision;
@@ -85,8 +91,8 @@ public class RobotContainer {
                     VisionConstants.camera2Name, VisionConstants.robotToCamera2));
 
         range = new RangeSubsystem(new RangeIOCanRange());
-        soup = new SuperstructureSubsystem();
         claw = new ClawSubsystem(new ClawIOTalonFX());
+        soup = new SuperstructureSubsystem(new ElevatorIOTalonFX());
         // elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -127,8 +133,8 @@ public class RobotContainer {
                     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
         range = null;
 
-        soup = new SuperstructureSubsystem();
         claw = new ClawSubsystem(new ClawIOSim());
+        soup = new SuperstructureSubsystem(new ElevatorIOSim());
 
         // TODO: vvv implement real sim IO
         // elevator =
@@ -149,9 +155,10 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
         range = new RangeSubsystem(new RangeIO() {});
-        soup = new SuperstructureSubsystem();
         claw = new ClawSubsystem(new ClawIO() {});
+        soup = new SuperstructureSubsystem(new ElevatorIO() {});
 
+        // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         break;
     }
@@ -219,10 +226,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.povUp().onTrue(soup.ElevatorTop(soup));
-    controller.povRight().onTrue(soup.ElevatorMid(soup));
-    controller.povDown().onTrue(soup.ElevatorBottom(soup));
     controller.povLeft().whileTrue(claw.runForward(claw));
+    controller.povUp().whileTrue(soup.ElevatorTop(soup));
+    controller.povRight().whileTrue(soup.ElevatorMid(soup));
+    controller.povDown().whileTrue(soup.ElevatorBottom(soup));
   }
 
   /**

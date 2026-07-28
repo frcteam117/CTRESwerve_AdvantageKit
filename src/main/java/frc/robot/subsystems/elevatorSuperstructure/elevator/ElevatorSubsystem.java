@@ -1,13 +1,13 @@
 package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
-// import frc.robot.subsystems.elevatorSuperstructure.*;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO.ElevatorInputs;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem {
 
   private final ElevatorIO io;
   // private final ElevatorIOInputs inputs = new ElevatorIOInputs();
-  private final ElevatorIOMutInputsAutoLogged inputs = new ElevatorIOMutInputsAutoLogged();
+  private final ElevatorMutInputsAutoLogged inputs = new ElevatorMutInputsAutoLogged();
   // we're just gonna trust that the other subsystems wont edit the io :3
   public ElevatorSubsystem(ElevatorIO io) {
     this.io = io;
@@ -18,36 +18,11 @@ public class ElevatorSubsystem {
     Logger.processInputs("Elevator", inputs);
   }
 
-  public ElevatorIO getIO() { // READ ONLY PRETTY PLS!!!
+  public ElevatorInputs getInputs() {
+    return inputs;
+  }
+
+  public ElevatorIO getIO() {
     return io;
   }
-  // TODO: ADJUST ONCE GEAR RATIOS ARE KNOWN!!!
-  // also idk if requesting every loop even when not moving is best? but we shall find out
-  // public Command ElevatorUp(ElevatorSubsystem elevator) {
-  //   return elevator.run(
-  //       () -> {
-  //         io.setPosition(100);
-  //       });
-  // }
-
-  // public Command ElevatorMid(ElevatorSubsystem elevator) {
-  //   return elevator.run(
-  //       () -> {
-  //         io.setPosition(50);
-  //       });
-  // }
-
-  // public Command ElevatorDown(ElevatorSubsystem elevator) {
-  //   return elevator.run(
-  //       () -> {
-  //         io.setPosition(0);
-  //       });
-  // }
-
-  // public Command Stop(ElevatorSubsystem elevator) {
-  //   return elevator.run(
-  //       () -> {
-  //         io.setVelocity(0);
-  //       });
-  // }
 }
