@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.robot.subsystems.elevatorSuperstructure.*;
 import org.littletonrobotics.junction.Logger;
 

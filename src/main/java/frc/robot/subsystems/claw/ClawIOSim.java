@@ -33,7 +33,7 @@ public class ClawIOSim implements ClawIO {
   private final DCMotorSim talonSimModel =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              DCMotor.getKrakenX60Foc(1), 0.001, ClawConstants.gearRatio),
+              DCMotor.getKrakenX60Foc(1), ClawConstants.MOI, ClawConstants.gearRatio),
           DCMotor.getKrakenX60Foc(1));
   // TalonFXSimState rightTalonFXSim;// = leaderTalon.getSimState();
 
@@ -87,7 +87,7 @@ public class ClawIOSim implements ClawIO {
     inputs.connected = true;
     // this is in RPS, is RPM better?
     inputs.velocityRotationsPerSec =
-        talonSimModel.getAngularVelocityRPM() * 60; // convert RPM -> RPS
+        talonSimModel.getAngularVelocityRPM() / 60; // convert RPM -> RPS
     // the interwebs says appliedVolts is the same as InputVoltage here, i hope it's right
     inputs.appliedVolts = talonSimModel.getInputVoltage();
     inputs.currentAmps = Math.abs(talonSimModel.getCurrentDrawAmps());

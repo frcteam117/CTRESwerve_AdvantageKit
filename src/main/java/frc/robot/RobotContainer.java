@@ -21,6 +21,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.can_range.RangeIO;
 import frc.robot.subsystems.can_range.RangeIOCanRange;
 import frc.robot.subsystems.can_range.RangeSubsystem;
+import frc.robot.subsystems.claw.ClawIO;
+import frc.robot.subsystems.claw.ClawIOSim;
+import frc.robot.subsystems.claw.ClawIOTalonFX;
+import frc.robot.subsystems.claw.ClawSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -48,6 +52,7 @@ public class RobotContainer {
   private final RangeSubsystem range;
   // private final ElevatorSubsystem elevator;
   private final SuperstructureSubsystem soup;
+  private final ClawSubsystem claw;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -81,6 +86,7 @@ public class RobotContainer {
 
         range = new RangeSubsystem(new RangeIOCanRange());
         soup = new SuperstructureSubsystem();
+        claw = new ClawSubsystem(new ClawIOTalonFX());
         // elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -122,6 +128,7 @@ public class RobotContainer {
         range = null;
 
         soup = new SuperstructureSubsystem();
+        claw = new ClawSubsystem(new ClawIOSim());
 
         // TODO: vvv implement real sim IO
         // elevator =
@@ -143,6 +150,7 @@ public class RobotContainer {
 
         range = new RangeSubsystem(new RangeIO() {});
         soup = new SuperstructureSubsystem();
+        claw = new ClawSubsystem(new ClawIO() {});
 
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         break;
@@ -185,6 +193,7 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    claw.setDefaultCommand(claw.stop(claw));
 
     // Lock to 0° when A button is held
     controller
@@ -213,6 +222,7 @@ public class RobotContainer {
     controller.povUp().onTrue(soup.ElevatorTop(soup));
     controller.povRight().onTrue(soup.ElevatorMid(soup));
     controller.povDown().onTrue(soup.ElevatorBottom(soup));
+    controller.povLeft().whileTrue(claw.runForward(claw));
   }
 
   /**
