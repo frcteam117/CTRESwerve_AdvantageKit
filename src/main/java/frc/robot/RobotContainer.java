@@ -22,8 +22,6 @@ import frc.robot.subsystems.can_range.RangeIO;
 import frc.robot.subsystems.can_range.RangeIOCanRange;
 import frc.robot.subsystems.can_range.RangeSubsystem;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
@@ -61,7 +59,7 @@ public class RobotContainer {
         // a CANcoder
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                // new GyroIOPigeon2(),
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
@@ -100,7 +98,7 @@ public class RobotContainer {
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
+                // new GyroIO() {},
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
@@ -121,11 +119,8 @@ public class RobotContainer {
         // Replayed robot, disable IO implementations
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
+                // new GyroIO() {},
+                new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
         range = new RangeSubsystem(new RangeIO() {});
