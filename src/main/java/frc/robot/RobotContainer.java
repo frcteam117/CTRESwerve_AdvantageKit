@@ -244,7 +244,7 @@ public class RobotContainer {
     controller.povRight().whileTrue(soup.ElevatorMid(soup));
     controller.povDown().whileTrue(soup.ElevatorBottom(soup));
     controller.circle().whileTrue(soup.ArmDown(soup));
-    controller.triangle().whileTrue(soup.ArmUp(soup));
+    controller.triangle().whileTrue(soup.WristMid(soup));
     controller.square().whileTrue(soup.WristDown(soup));
     controller.cross().whileTrue(soup.WristUp(soup));
   }

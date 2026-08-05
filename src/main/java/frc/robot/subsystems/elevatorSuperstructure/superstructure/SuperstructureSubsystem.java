@@ -75,6 +75,13 @@ public class SuperstructureSubsystem extends SubsystemBase {
         });
   }
 
+  public Command WristMid(SuperstructureSubsystem soup) {
+    return soup.run(
+        () -> {
+          wrist.getIO().setPosition(WristConstants.midRotations);
+        });
+  }
+
   public Command ArmUp(SuperstructureSubsystem soup) {
     return soup.run(
         () -> {
