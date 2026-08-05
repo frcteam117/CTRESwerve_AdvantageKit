@@ -25,8 +25,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
     arm = new ArmSubsystem(armIO);
     wrist = new WristSubsystem(wristIO);
 
-    inputs =
-        new SuperstructureInputs(elevator.getInputs() /*, arm.getInputs(), wrist.getInputs() */);
+    inputs = new SuperstructureInputs(elevator.getInputs(), arm.getInputs(), wrist.getInputs());
   }
 
   @Override
