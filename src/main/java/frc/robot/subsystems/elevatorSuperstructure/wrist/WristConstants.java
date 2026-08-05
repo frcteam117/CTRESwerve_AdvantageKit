@@ -5,11 +5,11 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 
 public class WristConstants {
   public static final int CANID = 19;
-  public static final double gear_ratio = 1;
+  public static final double gear_ratio = 3;
 
-  public static final double topRotations = 0.5;
+  public static final double topRotations = 1;
   public static final double midRotations =
-      0.25; // these 3 are in mechanism rotations (NOT geared up)
+      0.5; // these 3 are in mechanism rotations (NOT geared up)
   public static final double bottomRotations = 0;
 
   // change later, value is incorrect :(

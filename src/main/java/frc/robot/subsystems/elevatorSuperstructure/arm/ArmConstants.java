@@ -8,11 +8,11 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 
 public class ArmConstants {
   public static final int CANID = 17;
-  public static final double gear_ratio = 3;
+  public static final double gear_ratio = 3.0;
 
-  public static final double topRotations = 0.5;
+  public static final double topRotations = 1.0;
   public static final double midRotations =
-      0.25; // these 3 are in mechanism rotations (NOT geared up)
+      0.5; // these 3 are in mechanism rotations (NOT geared up)
   public static final double bottomRotations = 0;
 
   // change later, value is incorrect :(

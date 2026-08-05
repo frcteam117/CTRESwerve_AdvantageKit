@@ -41,7 +41,7 @@ public class ArmIOSim implements ArmIO {
     inputs.positionRotations = talonSimModel.getAngularPosition().in(Rotations);
     // this is in RPS, is RPM better?
     inputs.velocityRotationsPerSec =
-        talonSimModel.getAngularVelocityRPM() * 60; // convert RPM -> RPS
+        talonSimModel.getAngularVelocityRPM() / 60; // convert RPM -> RPS
     // the interwebs says appliedVolts is the same as InputVoltage here, i hope it's right
     inputs.appliedVolts = talonSimModel.getInputVoltage();
     inputs.currentAmps = Math.abs(talonSimModel.getCurrentDrawAmps());
