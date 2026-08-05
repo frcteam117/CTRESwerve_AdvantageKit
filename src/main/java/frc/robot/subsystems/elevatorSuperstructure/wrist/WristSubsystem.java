@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elevatorSuperstructure.wrist;
 
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO.WristMutInputsAutoLogged;
 import org.littletonrobotics.junction.Logger;
 
 public class WristSubsystem {
