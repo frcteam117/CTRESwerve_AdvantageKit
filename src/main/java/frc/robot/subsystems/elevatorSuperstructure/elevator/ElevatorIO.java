@@ -22,9 +22,6 @@ public interface ElevatorIO {
 
     public double getCurrentAmps();
 
-    // public boolean getEncoderConnected();
-    // public Rotation2d getAbsolutePosition();
-
     public double[] getOdometryTimestamps();
 
     public double[] getOdometryPositionsRotations();

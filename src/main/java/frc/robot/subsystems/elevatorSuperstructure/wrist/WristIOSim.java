@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevatorSuperstructure.wrist;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,47 +14,26 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.TunerConstants;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO.WristIOInputs;
 
 public class WristIOSim implements WristIO {
-    private final TalonFX talon;
+  private final TalonFX talon;
 
-private final DCMotorSim talonSimModel =
-    new DCMotorSim (
-        DCMotor simMotor = DCMotor.getKrakenX60Foc(1);
-    );
+  private final DCMotorSim talonSimModel =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              DCMotor.getKrakenX60Foc(1), WristConstants.mechanismMOI, WristConstants.gear_ratio),
+          DCMotor.getKrakenX60Foc(1));
 
-    public WristIOSim() {
-      talon = new TalonFX(WristConstants.CANID, TunerConstants.kCANBus);
-   
-      var talonFXConfigs = new TalonFXConfiguration();
-
-      var slot0Configs = talonFXConfigs.Slot0;
-      // add PID tuning later, copied these values from the elevator tuning
-         slot0Configs.kS = 0.25; 
-         slot0Configs.kV = 0.12; 
-         slot0Configs.kA = 0.01; 
-         slot0Configs.kP = 4.8; 
-         slot0Configs.kI = 0;
-         slot0Configs.kD = 0.1;
-    var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    motionMagicConfigs.MotionMagicAcceleration =
-        160; // Target acceleration of 160 rps/s (0.5 seconds)
-    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
-
-    
-    talon.getConfigurator().apply(talonFXConfigs);
-    // followerTalon.getConfigurator().apply(talonFXConfigs);
-
+  public WristIOSim() {
+    talon = new TalonFX(WristConstants.CANID, TunerConstants.kCANBus);
+    talon.getConfigurator().apply(WristConstants.talonFXConfigs);
     var talonFXSim = talon.getSimState();
     talonFXSim.Orientation = ChassisReference.CounterClockwise_Positive;
     talonFXSim.setMotorType(TalonFXSimState.MotorType.KrakenX60);
   }
 
-    @Override
-  public void updateInputs(WristIOInputs inputs) {
+  @Override
+  public void updateInputs(WristMutInputs inputs) {
     var talonFXSim = getTalonSimState();
     var talonSimModel = getTalonSimModel();
 
@@ -79,7 +57,15 @@ private final DCMotorSim talonSimModel =
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    if (inputs.positionRotations > WristConstants.topRotations) {
+      inputs.positionRotations = WristConstants.topRotations;
+      talonSimModel.setInputVoltage(0);
+    } else if (inputs.positionRotations < WristConstants.bottomRotations) {
+      inputs.positionRotations = WristConstants.bottomRotations;
+      talonSimModel.setInputVoltage(0);
+    } else {
+      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    }
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;
@@ -106,6 +92,7 @@ private final DCMotorSim talonSimModel =
 
   @Override
   public void setPosition(double rotations) {
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     // configure using gear ratios on real elevator, then make specific commands
     talon.setControl(m_request.withPosition(rotations));
   }
@@ -119,4 +106,3 @@ private final DCMotorSim talonSimModel =
     return talonSimModel;
   }
 }
-

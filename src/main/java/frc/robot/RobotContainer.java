@@ -31,11 +31,17 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOSim;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureSubsystem;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOSim;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -92,7 +98,9 @@ public class RobotContainer {
 
         range = new RangeSubsystem(new RangeIOCanRange());
         claw = new ClawSubsystem(new ClawIOTalonFX());
-        soup = new SuperstructureSubsystem(new ElevatorIOTalonFX());
+        soup =
+            new SuperstructureSubsystem(
+                new ElevatorIOTalonFX(), new ArmIOTalonFX(), new WristIOTalonFX());
         // elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -134,7 +142,7 @@ public class RobotContainer {
         range = null;
 
         claw = new ClawSubsystem(new ClawIOSim());
-        soup = new SuperstructureSubsystem(new ElevatorIOSim());
+        soup = new SuperstructureSubsystem(new ElevatorIOSim(), new ArmIOSim(), new WristIOSim());
 
         // TODO: vvv implement real sim IO
         // elevator =
@@ -156,7 +164,7 @@ public class RobotContainer {
 
         range = new RangeSubsystem(new RangeIO() {});
         claw = new ClawSubsystem(new ClawIO() {});
-        soup = new SuperstructureSubsystem(new ElevatorIO() {});
+        soup = new SuperstructureSubsystem(new ElevatorIO() {}, new ArmIO() {}, new WristIO() {});
 
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});

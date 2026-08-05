@@ -1,30 +1,26 @@
 package frc.robot.subsystems.elevatorSuperstructure.arm;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.ArmIOInputsAutoLogged;
-
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO.ArmInputs;
 import org.littletonrobotics.junction.Logger;
 
 public class ArmSubsystem {
-   private final ArmIO io;
-   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
+  private final ArmIO io;
+  private final ArmMutInputsAutoLogged inputs = new ArmMutInputsAutoLogged();
 
-   public ArmSubsystem(ArmIO io) {
+  public ArmSubsystem(ArmIO io) {
     this.io = io;
-   }
+  }
 
-   @Override
-   public void periodic() {
+  public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
-   }
+  }
 
-   //change all of this later
-   public Command ArmUp {
-    return arm.run(
-        () -> {
-          io.setPosition(100);
-        });
-   }
+  public ArmInputs getInputs() {
+    return inputs;
+  }
+
+  public ArmIO getIO() {
+    return io;
+  }
 }

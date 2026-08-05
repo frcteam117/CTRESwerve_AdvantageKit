@@ -1,31 +1,22 @@
 package frc.robot.subsystems.elevatorSuperstructure.wrist;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.wrist.WristIOInputsAutoLogged;
-
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO.WristMutInputsAutoLogged;
 import org.littletonrobotics.junction.Logger;
 
 public class WristSubsystem {
-   private final WristIO io;
-   private final WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
+  private final WristIO io;
+  private final WristMutInputsAutoLogged inputs = new WristMutInputsAutoLogged();
 
-   public WristSubsystem(WristIO io) {
+  public WristSubsystem(WristIO io) {
     this.io = io;
-   }
+  }
 
-   @Override
-   public void periodic() {
+  public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Wrist", inputs);
-   }
+  }
 
-   //change all of this later
-   public Command WristUp {
-    return wrist.run(
-        () -> {
-          io.setPosition(100);
-        });
-   }
+  public WristIO getIO() {
+    return io;
+  }
 }
-

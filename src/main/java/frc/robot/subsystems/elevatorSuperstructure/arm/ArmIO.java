@@ -1,29 +1,47 @@
 package frc.robot.subsystems.elevatorSuperstructure.arm;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO.ElevatorIOInputs;
+import lombok.Getter;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
-    @AutoLog
-    public static class ArmIOInputs {
-        public boolean connected = false;
-        public double positionRotations = 0.0;
-        public double appliedVolts = 0.0;
-        public double currentAmps = 0.0;
-        public double[] odometryTimestamps = new double[] {};
-        public double[] odometryPositionsRotations = new double[] {};
-    }
+  public static interface ArmInputs {
+    public boolean isConnected();
 
- public default void updateInputs(ArmIOInputs inputs) {}
+    public double getPositionRotations();
 
- public default void setPosition(double rotations) {}
+    public double getVelocityRotationsPerSec();
 
- public default void setVelocity(double velocityRadPerSec) {}
+    public double getAppliedVolts();
 
- public default TalonFXSimState getTalonSimState() {
+    public double getCurrentAmps();
+
+    public double[] getOdometryTimestamps();
+
+    public double[] getOdometryPositionsRotations();
+  }
+
+  @Getter
+  @AutoLog
+  public static class ArmMutInputs implements ArmInputs {
+    public boolean connected = false;
+    public double positionRotations = 0.0;
+    public double velocityRotationsPerSec = 0.0;
+    public double appliedVolts = 0.0;
+    public double currentAmps = 0.0;
+
+    public double[] odometryTimestamps = new double[] {};
+    public double[] odometryPositionsRotations = new double[] {};
+  }
+
+  public default void updateInputs(ArmMutInputs inputs) {}
+
+  public default void setPosition(double rotations) {}
+
+  public default void setVelocity(double velocityRadPerSec) {}
+
+  public default TalonFXSimState getTalonSimState() {
     return null;
   }
 
