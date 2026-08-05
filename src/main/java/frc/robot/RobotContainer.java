@@ -31,6 +31,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOTalonFX;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureSubsystem;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOTalonFX;
@@ -58,6 +60,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // for var loading:
   private final ElevatorConstants elevatorConstants = new ElevatorConstants();
+  private final ArmConstants armConstants = new ArmConstants();
+  private final WristConstants wristConstants = new WristConstants();
+
   // Subsystems
   private final Drive drive;
   private final Vision vision;
@@ -221,7 +226,7 @@ public class RobotContainer {
                 () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
-    controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    controller.L2().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -238,6 +243,10 @@ public class RobotContainer {
     controller.povUp().whileTrue(soup.ElevatorTop(soup));
     controller.povRight().whileTrue(soup.ElevatorMid(soup));
     controller.povDown().whileTrue(soup.ElevatorBottom(soup));
+    controller.circle().whileTrue(soup.ArmDown(soup));
+    controller.triangle().whileTrue(soup.ArmUp(soup));
+    controller.square().whileTrue(soup.WristDown(soup));
+    controller.cross().whileTrue(soup.WristUp(soup));
   }
 
   /**

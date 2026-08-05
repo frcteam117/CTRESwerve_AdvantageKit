@@ -2,10 +2,12 @@ package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureIO.SuperstructureInputs;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristSubsystem;
 
@@ -30,9 +32,8 @@ public class SuperstructureSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     elevator.periodic();
-    // arm.periodic();
-    // claw.periodic();
-    // wrist.periodic();
+    arm.periodic();
+    wrist.periodic();
   }
 
   public SuperstructureInputs getInputs() {
@@ -63,14 +64,28 @@ public class SuperstructureSubsystem extends SubsystemBase {
   public Command WristUp(SuperstructureSubsystem soup) {
     return soup.run(
         () -> {
-          wrist.getIO().setPosition(100);
+          wrist.getIO().setPosition(WristConstants.topRotations);
+        });
+  }
+
+  public Command WristDown(SuperstructureSubsystem soup) {
+    return soup.run(
+        () -> {
+          wrist.getIO().setPosition(WristConstants.bottomRotations);
         });
   }
 
   public Command ArmUp(SuperstructureSubsystem soup) {
     return soup.run(
         () -> {
-          arm.getIO().setPosition(100);
+          arm.getIO().setPosition(ArmConstants.topRotations);
+        });
+  }
+
+  public Command ArmDown(SuperstructureSubsystem soup) {
+    return soup.run(
+        () -> {
+          arm.getIO().setPosition(ArmConstants.bottomRotations);
         });
   }
 }
