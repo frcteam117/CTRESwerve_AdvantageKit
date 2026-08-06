@@ -57,17 +57,17 @@ public class ArmIOSim implements ArmIO {
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    // if (inputs.positionRotations > ArmConstants.topRotations) {
-    //   inputs.positionRotations = ArmConstants.topRotations;
-    //   talonSimModel.setInputVoltage(0);
-    // } else if (inputs.positionRotations < ArmConstants.bottomRotations) {
-    //   inputs.positionRotations = ArmConstants.bottomRotations;
-    //   talonSimModel.setInputVoltage(0);
-    // } else {
-    //   talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-    // }
+    if (inputs.positionRotations > ArmConstants.topRotations) {
+      inputs.positionRotations = ArmConstants.topRotations;
+      talonSimModel.setInputVoltage(0);
+    } else if (inputs.positionRotations < ArmConstants.bottomRotations) {
+      inputs.positionRotations = ArmConstants.bottomRotations;
+      talonSimModel.setInputVoltage(0);
+    } else {
+      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    }
     talonSimModel.update(0.020); // assume 20 ms loop time
-    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    // talonSimModel.setInputVoltage(motorVoltage.in(Volts));
 
     // apply the new rotor position and velocity to the TalonFX;
     // note that this is rotor position/velocity (before gear ratio), but

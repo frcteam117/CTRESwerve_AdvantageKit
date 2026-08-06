@@ -14,6 +14,15 @@ public class WristSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Wrist", inputs);
+
+    WristConstants.talonFXConfigs.Slot0.kS = WristConstants.tunable_kS.getAsDouble();
+    WristConstants.talonFXConfigs.Slot0.kV = WristConstants.tunable_kV.getAsDouble();
+    WristConstants.talonFXConfigs.Slot0.kA = WristConstants.tunable_kA.getAsDouble();
+    WristConstants.talonFXConfigs.Slot0.kP = WristConstants.tunable_kP.getAsDouble();
+    WristConstants.talonFXConfigs.Slot0.kD = WristConstants.tunable_kD.getAsDouble();
+    WristConstants.talonFXConfigs.Slot0.kG = WristConstants.tunable_kG.getAsDouble();
+
+    io.updateConfig();
   }
 
   public WristInputs getInputs() {

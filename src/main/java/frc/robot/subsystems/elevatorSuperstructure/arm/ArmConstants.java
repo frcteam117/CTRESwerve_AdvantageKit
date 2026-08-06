@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class ArmConstants {
   public static final int CANID = 17;
   public static final double gear_ratio = 3.0;
-  public static final String tuningPrefix = "/Tuning/";
+  public static final String tuningPrefix = "/YAI/";
   public static final double topRotations = 1.0;
   public static final double midRotations =
       0.5; // these 3 are in mechanism rotations (NOT geared up)
@@ -29,7 +29,7 @@ public class ArmConstants {
   public static final LoggedNetworkNumber tunable_kA =
       new LoggedNetworkNumber(tuningPrefix + "kA", 0.01);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber(tuningPrefix + "kP", 9);// higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 9); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
       new LoggedNetworkNumber(tuningPrefix + "kD", 0.0001);
