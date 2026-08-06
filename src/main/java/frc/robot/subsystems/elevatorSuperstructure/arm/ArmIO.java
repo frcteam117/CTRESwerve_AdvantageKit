@@ -48,4 +48,6 @@ public interface ArmIO {
   public default DCMotorSim getTalonSimModel() {
     return null;
   }
+
+  public default void updateConfig() {}
 }

@@ -14,6 +14,16 @@ public class ArmSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
+
+    // Logger.recordOutput(ArmConstants.tuningLogStart + "kS", ArmConstants.tunable_kS);
+    ArmConstants.talonFXConfigs.Slot0.kS = ArmConstants.tunable_kS.getAsDouble();
+    ArmConstants.talonFXConfigs.Slot0.kV = ArmConstants.tunable_kV.getAsDouble();
+    ArmConstants.talonFXConfigs.Slot0.kA = ArmConstants.tunable_kA.getAsDouble();
+    ArmConstants.talonFXConfigs.Slot0.kP = ArmConstants.tunable_kP.getAsDouble();
+    ArmConstants.talonFXConfigs.Slot0.kD = ArmConstants.tunable_kD.getAsDouble();
+    ArmConstants.talonFXConfigs.Slot0.kG = ArmConstants.tunable_kG.getAsDouble();
+
+    io.updateConfig();
   }
 
   public ArmInputs getInputs() {

@@ -37,4 +37,9 @@ public class ArmIOTalonFX implements ArmIO {
 
     talon.setControl(m_request.withPosition(rotations));
   }
+
+  @Override
+  public void updateConfig() {
+    talon.getConfigurator().apply(ArmConstants.talonFXConfigs);
+  }
 }

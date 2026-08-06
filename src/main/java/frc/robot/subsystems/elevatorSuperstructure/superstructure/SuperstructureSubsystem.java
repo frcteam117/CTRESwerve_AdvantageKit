@@ -88,6 +88,13 @@ public class SuperstructureSubsystem extends SubsystemBase {
         });
   }
 
+  public Command ArmMid(SuperstructureSubsystem soup) {
+    return soup.run(
+        () -> {
+          arm.getIO().setPosition(ArmConstants.midRotations);
+        });
+  }
+
   public Command ArmDown(SuperstructureSubsystem soup) {
     return soup.run(
         () -> {
