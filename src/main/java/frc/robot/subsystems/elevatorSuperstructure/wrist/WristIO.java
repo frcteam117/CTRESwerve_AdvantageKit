@@ -39,6 +39,8 @@ public interface WristIO {
 
   public default void updateInputs(WristMutInputs inputs) {}
 
+  public default void updateConfig() {}
+
   public default void setPosition(double rotations) {}
 
   public default void setVelocity(double velocityRadPerSec) {}

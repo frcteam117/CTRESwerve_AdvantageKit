@@ -67,7 +67,6 @@ public class WristIOSim implements WristIO {
     //   talonSimModel.setInputVoltage(motorVoltage.in(Volts));
     // }
     talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;
@@ -106,5 +105,10 @@ public class WristIOSim implements WristIO {
 
   public DCMotorSim getTalonSimModel() {
     return talonSimModel;
+  }
+
+  @Override
+  public void updateConfig() {
+    talon.getConfigurator().apply(WristConstants.talonFXConfigs);
   }
 }

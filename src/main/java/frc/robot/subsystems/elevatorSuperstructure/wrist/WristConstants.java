@@ -22,36 +22,27 @@ public class WristConstants {
     0.612765957447 * ElevatorConstants.topRotations // 28.8/47 inches
   };
 
+  public static final String tuningPrefix = "/Tuning/";
+
   // change later, value is incorrect :(
   // length of arm = ???
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * length of the arm^2
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
-  // the two scaling functions i used when writing my model:
-  // TODO: these should probably also be in the util file?
-  /** squaring scale */
-  public static final double scale1(double n) {
-    return Math.pow(n, 2);
-  }
-  /** abs(n) to the power of 1/6 */
-  public static final double scale2(double n) {
-    return Math.pow(Math.abs(n), 1 / 6);
-  }
-
   public static final LoggedNetworkNumber tunable_kS =
-      new LoggedNetworkNumber("/Tuning/" + "kS", 0.009);
+      new LoggedNetworkNumber(tuningPrefix + "kS", 0.009);
   public static final LoggedNetworkNumber tunable_kV =
-      new LoggedNetworkNumber("/Tuning/" + "kV", .25);
+      new LoggedNetworkNumber(tuningPrefix + "kV", .25);
   public static final LoggedNetworkNumber tunable_kA =
-      new LoggedNetworkNumber("/Tuning/" + "kA", 0);
+      new LoggedNetworkNumber(tuningPrefix + "kA", 0);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber("/Tuning/" + "kP", 50); // higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 50); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
-      new LoggedNetworkNumber("/Tuning/" + "kD", 1);
+      new LoggedNetworkNumber(tuningPrefix + "kD", 1);
   public static final LoggedNetworkNumber tunable_kG =
-      new LoggedNetworkNumber("/Tuning/" + "kG", 0.2);
+      new LoggedNetworkNumber(tuningPrefix + "kG", 0.2);
 
   // set slot 0 gains
   public WristConstants() {
