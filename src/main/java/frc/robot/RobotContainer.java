@@ -214,6 +214,7 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
     claw.setDefaultCommand(claw.stop(claw));
+    soup.setDefaultCommand(soup.RunSoupPositions(soup));
 
     // Lock to 0° when A button is held
     controller
@@ -240,18 +241,18 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     controller.povLeft().whileTrue(claw.runForward(claw));
-    controller.povUp().whileTrue(soup.ElevatorTop(soup));
-    controller.povRight().whileTrue(soup.ElevatorMid(soup));
-    controller.povDown().whileTrue(soup.ElevatorBottom(soup));
+    // controller.povUp().whileTrue(soup.ElevatorTop(soup));
+    // controller.povRight().whileTrue(soup.ElevatorMid(soup));
+    // controller.povDown().whileTrue(soup.ElevatorBottom(soup));
 
-    // 2,4,6
-    controller.povUpRight().whileTrue(soup.ArmDown(soup));
-    controller.povDownRight().whileTrue(soup.ArmMid(soup));
-    controller.povDownLeft().whileTrue(soup.ArmUp(soup));
+    // // 2,4,6
+    // controller.povUpRight().whileTrue(soup.ArmDown(soup));
+    // controller.povDownRight().whileTrue(soup.ArmMid(soup));
+    // controller.povDownLeft().whileTrue(soup.ArmUp(soup));
     // 1,3,5
-    controller.triangle().whileTrue(soup.WristMid(soup));
-    controller.square().whileTrue(soup.WristDown(soup));
-    controller.cross().whileTrue(soup.WristUp(soup));
+    controller.triangle().whileTrue(soup.RequestRaiseWrist(soup));
+    controller.square().whileTrue(soup.RequestLowerWrist(soup));
+    // controller.cross().whileTrue(soup.RequestWristPosition(soup));
   }
 
   /**

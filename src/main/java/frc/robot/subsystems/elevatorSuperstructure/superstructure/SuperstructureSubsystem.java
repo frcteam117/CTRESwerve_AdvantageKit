@@ -2,7 +2,6 @@ package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
@@ -30,75 +29,121 @@ public class SuperstructureSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     elevator.periodic();
+
     arm.periodic();
+
     wrist.periodic();
   }
 
   public SuperstructureInputs getInputs() {
     return inputs;
   }
+  // default command: set soup to go to their nextPositions
+  public Command RunSoupPositions(SuperstructureSubsystem soup) {
+    // return RunElevatorPosition(soup)
+    //       .alongWith(RunArmPosition(soup))
+    //       .alongWith(RunWristPosition(soup));
+    return RunWristPosition(soup);
+  }
 
-  public Command ElevatorTop(SuperstructureSubsystem soup) {
+  // public Command ElevatorTop(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () -> {
+  //         elevator.getIO().setPosition(ElevatorConstants.topRotations);
+  //       });
+  // }
+
+  // public Command ElevatorMid(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () -> {
+  //         elevator.getIO().setPosition(ElevatorConstants.midRotations);
+  //       });
+  // }
+
+  // public Command ElevatorBottom(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () -> {
+  //         elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
+  //       });
+  // }
+
+  public Command RunWristPosition(SuperstructureSubsystem soup) {
+    return soup.run(
+        () -> {
+          wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
+        });
+  }
+
+  public void RequestWristPosition(double requestedRots) {
+    wrist.setNextPosition(
+        SuperstructureUtil.calcSafeWristPosition(
+            requestedRots,
+            elevator.getInputs().getPositionRotations(),
+            arm.getInputs().getPositionRotations()));
+  }
+
+  // will this interruption mess up the elevator & arm movement?
+  public Command RequestRaiseWrist(SuperstructureSubsystem soup) {
     return soup.runOnce(
-        () -> {
-          elevator.getIO().setPosition(ElevatorConstants.topRotations);
-        });
+        () ->
+            wrist.setNextPosition(
+                SuperstructureUtil.calcSafeWristPosition(
+                    wrist.getInputs().getPositionRotations() + WristConstants.rotRate,
+                    elevator.getInputs().getPositionRotations(),
+                    arm.getInputs().getPositionRotations())));
   }
 
-  public Command ElevatorMid(SuperstructureSubsystem soup) {
+  public Command RequestLowerWrist(SuperstructureSubsystem soup) {
     return soup.runOnce(
-        () -> {
-          elevator.getIO().setPosition(ElevatorConstants.midRotations);
-        });
+        () ->
+            wrist.setNextPosition(
+                SuperstructureUtil.calcSafeWristPosition(
+                    wrist.getInputs().getPositionRotations() - WristConstants.rotRate,
+                    elevator.getInputs().getPositionRotations(),
+                    arm.getInputs().getPositionRotations())));
   }
 
-  public Command ElevatorBottom(SuperstructureSubsystem soup) {
-    return soup.runOnce(
-        () -> {
-          elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
-        });
-  }
+  // public Command WristUp(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         wrist.getIO().setPosition(WristConstants.topRotations);
+  //       });
+  // }
 
-  public Command WristUp(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          wrist.getIO().setPosition(WristConstants.topRotations);
-        });
-  }
+  // public Command WristDown(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         wrist.getIO().setPosition(WristConstants.bottomRotations);
+  //       });
+  // }
 
-  public Command WristDown(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          wrist.getIO().setPosition(WristConstants.bottomRotations);
-        });
-  }
+  // public Command WristMid(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         wrist.getIO().setPosition(WristConstants.midRotations);
+  //       });
+  // }
 
-  public Command WristMid(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          wrist.getIO().setPosition(WristConstants.midRotations);
-        });
-  }
+  // public Command ArmUp(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         arm.getIO().setPosition(ArmConstants.topRotations);
+  //       });
+  // }
 
-  public Command ArmUp(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          arm.getIO().setPosition(ArmConstants.topRotations);
-        });
-  }
+  // public Command ArmMid(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         arm.getIO().setPosition(ArmConstants.midRotations);
+  //       });
+  // }
 
-  public Command ArmMid(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          arm.getIO().setPosition(ArmConstants.midRotations);
-        });
-  }
-
-  public Command ArmDown(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          arm.getIO().setPosition(ArmConstants.bottomRotations);
-        });
-  }
+  // public Command ArmDown(SuperstructureSubsystem soup) {
+  //   return soup.run(
+  //       () -> {
+  //         arm.getIO().setPosition(ArmConstants.bottomRotations);
+  //       });
+  // }
 }

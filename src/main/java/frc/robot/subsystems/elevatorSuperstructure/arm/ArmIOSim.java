@@ -57,15 +57,15 @@ public class ArmIOSim implements ArmIO {
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    // if (inputs.positionRotations > ArmConstants.topRotations) {
-    //   inputs.positionRotations = ArmConstants.topRotations;
-    //   talonSimModel.setInputVoltage(0);
-    // } else if (inputs.positionRotations < ArmConstants.bottomRotations) {
-    //   inputs.positionRotations = ArmConstants.bottomRotations;
-    //   talonSimModel.setInputVoltage(0);
-    // } else {
-    //   talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-    // }
+    if (inputs.positionRotations > ArmConstants.maxRotations) {
+      inputs.positionRotations = ArmConstants.maxRotations;
+      talonSimModel.setInputVoltage(0);
+    } else if (inputs.positionRotations < ArmConstants.minRotations) {
+      inputs.positionRotations = ArmConstants.minRotations;
+      talonSimModel.setInputVoltage(0);
+    } else {
+      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    }
     talonSimModel.update(0.020); // assume 20 ms loop time
     talonSimModel.setInputVoltage(motorVoltage.in(Volts));
 

@@ -6,13 +6,14 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 public class ElevatorConstants {
   public static final int leaderCANID = 14;
   public static final int followerCANID = 15;
-
-  public static final int topRotations = 100;
-  public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared up)
-  public static final int bottomRotations = 0;
+  // TODO: adjust these for the in -> rot calculation
+  public static final double topRotations = 25.4;
+  //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
+  // down)
+  public static final double bottomRotations = 0;
 
   public static final double gear_ratio =
-      9.0; // TODO: change, and add rads -> mps conversion to elevator inputs
+      0.375; // TODO: change, and add rads -> mps conversion to elevator inputs
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * pulley radius^2
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();

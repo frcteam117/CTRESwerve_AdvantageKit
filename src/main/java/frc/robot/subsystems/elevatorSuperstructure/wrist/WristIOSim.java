@@ -57,15 +57,17 @@ public class WristIOSim implements WristIO {
 
     // use the motor voltage to calculate new position and velocity
     // using WPILib's DCMotorSim class for physics simulation
-    if (inputs.positionRotations > WristConstants.topRotations) {
-      inputs.positionRotations = WristConstants.topRotations;
-      talonSimModel.setInputVoltage(0);
-    } else if (inputs.positionRotations < WristConstants.bottomRotations) {
-      inputs.positionRotations = WristConstants.bottomRotations;
-      talonSimModel.setInputVoltage(0);
-    } else {
-      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-    }
+    // if (inputs.positionRotations > WristConstants.maxRotations) {
+    //   inputs.positionRotations = WristConstants.maxRotations;
+    //   talonSimModel.setInputVoltage(0);
+    // } else if (inputs.positionRotations < WristConstants.minRotations) {
+    //   inputs.positionRotations = WristConstants.minRotations;
+    //   talonSimModel.setInputVoltage(0);
+    // } else {
+    //   talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    // }
+    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;

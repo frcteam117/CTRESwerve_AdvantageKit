@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 public class WristSubsystem {
   private final WristIO io;
   private final WristMutInputsAutoLogged inputs = new WristMutInputsAutoLogged();
+  public double nextPositionRotations = 0.0;
 
   public WristSubsystem(WristIO io) {
     this.io = io;
@@ -22,5 +23,9 @@ public class WristSubsystem {
 
   public WristIO getIO() {
     return io;
+  }
+
+  public void setNextPosition(double safeRotations) {
+    inputs.nextPositionRotations = safeRotations;
   }
 }
