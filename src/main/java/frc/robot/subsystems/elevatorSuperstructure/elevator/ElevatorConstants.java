@@ -11,6 +11,7 @@ public class ElevatorConstants {
   //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
   // down)
   public static final double bottomRotations = 0;
+  public static final double rotRate = 25.0; // TODO: adjust when testing for vel changes
 
   public static final double gear_ratio =
       0.375; // TODO: change, and add rads -> mps conversion to elevator inputs
@@ -37,10 +38,10 @@ public class ElevatorConstants {
     // System.out.println("ABCDEFG " + talonFXConfigs.Slot0.kS);
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 70; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicCruiseVelocity = rotRate; // Target cruise velocity of 80 rps
     motionMagicConfigs.MotionMagicAcceleration =
-        140; // Target acceleration of 160 rps/s (0.5 seconds)
+        rotRate * 2; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk =
-        1400; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
+        rotRate * 20; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
   }
 }

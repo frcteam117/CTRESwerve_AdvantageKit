@@ -14,6 +14,8 @@ public class ArmConstants {
   public static final double maxRotations = 1.278;
   // 460 / 360; // these 2 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.681; // 245 / 360;
+  public static final double rotRate = 3; // TODO: adjust when testing for vel changes
+  // this is desired cruise velocity
 
   // change later, value is incorrect :(
   // length of arm = ???
@@ -56,11 +58,11 @@ public class ArmConstants {
     // System.out.println("ABCDEFG " + talonFXConfigs.Slot0.kS);
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 3; // Target cruise velocity of 3 rps
+    motionMagicConfigs.MotionMagicCruiseVelocity = rotRate; // Target cruise velocity of 3 rps
     motionMagicConfigs.MotionMagicAcceleration =
-        6; // Target acceleration of 160 rps/s (0.5 seconds)
+        rotRate * 2; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk =
-        60; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
+        rotRate * 20; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
   }
 }
 

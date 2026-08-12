@@ -33,4 +33,8 @@ public class ArmSubsystem {
   public ArmIO getIO() {
     return io;
   }
+
+  public void setNextPosition(double safeRotations) {
+    inputs.nextPositionRotations = safeRotations;
+  }
 }

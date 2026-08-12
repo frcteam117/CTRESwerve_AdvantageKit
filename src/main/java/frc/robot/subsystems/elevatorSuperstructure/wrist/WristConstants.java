@@ -2,7 +2,6 @@ package frc.robot.subsystems.elevatorSuperstructure.wrist;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class WristConstants {
@@ -12,15 +11,7 @@ public class WristConstants {
   public static final double maxRotations = 1.069;
   // 385 / 360; // these 3 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.638; // 230/360;
-  public static final double rotRate = 0.2; // TODO: adjust when testing for vel changes
-
-  // TODO: adjust from being in inches -> rotations (get measurements from CAD!)
-  public static final double[] piecewiseIntervals = {
-    0.063829787234 * ElevatorConstants.topRotations, // 3/47 inches
-    0.187234042553 * ElevatorConstants.topRotations, // 8.8/47 inches
-    0.276595744681 * ElevatorConstants.topRotations, // 13/47 inches
-    0.612765957447 * ElevatorConstants.topRotations // 28.8/47 inches
-  };
+  public static final double rotRate = 3.0; // TODO: adjust when testing for vel changes
 
   public static final String tuningPrefix = "/Tuning/";
 
@@ -70,10 +61,10 @@ public class WristConstants {
     // System.out.println("ABCDEFG " + talonFXConfigs.Slot0.kS);
 
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 3; // Target cruise velocity of 3 rps
+    motionMagicConfigs.MotionMagicCruiseVelocity = rotRate; // Target cruise velocity of 3 rps
     motionMagicConfigs.MotionMagicAcceleration =
-        6; // Target acceleration of 160 rps/s (0.5 seconds)
+        rotRate * 2; // Target acceleration of 160 rps/s (0.5 seconds)
     motionMagicConfigs.MotionMagicJerk =
-        60; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
+        rotRate * 20; // Target jerk of 1600 rps/s/s (0.1 seconds) (acceleration*10)
   }
 }

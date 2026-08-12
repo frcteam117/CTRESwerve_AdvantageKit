@@ -25,4 +25,8 @@ public class ElevatorSubsystem {
   public ElevatorIO getIO() {
     return io;
   }
+
+  public void setNextPosition(double safeRotations) {
+    inputs.nextPositionRotations = safeRotations;
+  }
 }

@@ -11,6 +11,8 @@ public interface ArmIO {
 
     public double getPositionRotations();
 
+    public double getNextPositionRotations();
+
     public double getVelocityRotationsPerSec();
 
     public double getAppliedVolts();
@@ -27,6 +29,7 @@ public interface ArmIO {
   public static class ArmMutInputs implements ArmInputs {
     public boolean connected = false;
     public double positionRotations = 0.0;
+    public double nextPositionRotations = 0.0;
     public double velocityRotationsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;

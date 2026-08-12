@@ -100,15 +100,15 @@ public class ElevatorIOSim implements ElevatorIO {
     // using WPILib's DCMotorSim class for physics simulation
     // TODO: add hardstops to non sim IO
     // also is this a good way to do the voltage? idk
-    if (inputs.positionRotations > ElevatorConstants.topRotations) {
-      inputs.positionRotations = ElevatorConstants.topRotations;
-      talonSimModel.setInputVoltage(0);
-    } else if (inputs.positionRotations < ElevatorConstants.bottomRotations) {
-      inputs.positionRotations = ElevatorConstants.bottomRotations;
-      talonSimModel.setInputVoltage(0);
-    } else {
-      talonSimModel.setInputVoltage(motorVoltage.in(Volts));
-    }
+    // if (inputs.positionRotations > ElevatorConstants.topRotations) {
+    //   inputs.positionRotations = ElevatorConstants.topRotations;
+    //   talonSimModel.setInputVoltage(0);
+    // } else if (inputs.positionRotations < ElevatorConstants.bottomRotations) {
+    //   inputs.positionRotations = ElevatorConstants.bottomRotations;
+    //   talonSimModel.setInputVoltage(0);
+    // } else {
+    talonSimModel.setInputVoltage(motorVoltage.in(Volts));
+    // }
     talonSimModel.update(0.020); // assume 20 ms loop time
 
     // apply the new rotor position and velocity to the TalonFX;
