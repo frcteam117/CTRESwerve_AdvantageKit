@@ -7,10 +7,10 @@ public class SuperstructureUtil {
 
   // TODO: adjust from being in inches -> rotations (get measurements from CAD!)
   public static final double[] piecewiseIntervals = {
-    0.063829787234 * ElevatorConstants.topRotations, // 3/47 inches
-    0.187234042553 * ElevatorConstants.topRotations, // 8.8/47 inches
-    0.276595744681 * ElevatorConstants.topRotations, // 13/47 inches
-    0.612765957447 * ElevatorConstants.topRotations // 28.8/47 inches
+    0.063829787234 * ElevatorConstants.topRotations, // 3/47 inches * ...
+    0.187234042553 * ElevatorConstants.topRotations, // 8.8/47 inches * ...
+    0.276595744681 * ElevatorConstants.topRotations, // 13/47 inches * ...
+    0.612765957447 * ElevatorConstants.topRotations // 28.8/47 inches * ...
   };
   // used for smoothing some of the intervals for the *WRIST*
   /** squaring scale */

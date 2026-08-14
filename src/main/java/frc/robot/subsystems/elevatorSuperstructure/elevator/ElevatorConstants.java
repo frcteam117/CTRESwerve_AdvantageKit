@@ -7,7 +7,7 @@ public class ElevatorConstants {
   public static final int leaderCANID = 14;
   public static final int followerCANID = 15;
   // TODO: adjust these for the in -> rot calculation
-  public static final double topRotations = 25.4;
+  public static final double topRotations = 21.22;
   //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
   // down)
   public static final double bottomRotations = 0;
