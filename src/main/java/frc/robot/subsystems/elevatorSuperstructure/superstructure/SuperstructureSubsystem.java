@@ -77,22 +77,20 @@ public class SuperstructureSubsystem extends SubsystemBase {
     return soup.runOnce(
         () ->
             elevator.setNextPosition(
-                // SuperstructureUtil.calcSafeElevatorPosition(
-                elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate // ,
-                // arm.getInputs().getPositionRotations(),
-                // wrist.getInputs().getPositionRotations())
-                ));
+                SuperstructureUtil.calcSafeElevatorPosition(
+                    elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate,
+                    arm.getInputs().getPositionRotations(),
+                    wrist.getInputs().getPositionRotations())));
   }
 
   public Command RequestLowerElevator(SuperstructureSubsystem soup) {
     return soup.runOnce(
         () ->
             elevator.setNextPosition(
-                // SuperstructureUtil.calcSafeElevatorPosition(
-                elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate // ,
-                // arm.getInputs().getPositionRotations(),
-                // wrist.getInputs().getPositionRotations())
-                ));
+                SuperstructureUtil.calcSafeElevatorPosition(
+                    elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate,
+                    arm.getInputs().getPositionRotations(),
+                    wrist.getInputs().getPositionRotations())));
   }
 
   // public Command ElevatorTop(SuperstructureSubsystem soup) {

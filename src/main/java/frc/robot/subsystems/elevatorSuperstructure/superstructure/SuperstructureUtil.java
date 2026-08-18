@@ -83,10 +83,10 @@ public class SuperstructureUtil {
       max = (220 + (20 * ((245 - aDeg) / -230))) / 360;
     }
     //
-    if (requestedRots < min) {
+    if (requestedRots > min) { // swapped >/< bc wrist is inverted for that bc of wrap around
       safeRotations = min;
     }
-    if (requestedRots > max) {
+    if (requestedRots < max) {
       safeRotations = max;
     }
 
@@ -138,6 +138,9 @@ public class SuperstructureUtil {
       safeRotations = max;
     }
 
+    Logger.recordOutput("Arm/State/requestedRotations", requestedRots);
+    Logger.recordOutput("Arm/State/safeRotations", safeRotations);
+
     return safeRotations;
   }
 
@@ -158,10 +161,17 @@ public class SuperstructureUtil {
         (armRotations == calcSafeArmPosition(armRotations, requestedRots, wristRotations));
     boolean safeRequest = (wristSafe && armSafe) ? true : false;
 
+    if (requestedRots > ElevatorConstants.topRotations) {
+      safeRotations = ElevatorConstants.topRotations;
+    } else if (requestedRots < ElevatorConstants.bottomRotations) {
+      safeRotations = ElevatorConstants.bottomRotations;
+    }
+
     Logger.recordOutput("Elevator/State/requestedRots", requestedRots);
     Logger.recordOutput("Elevator/State/safeRequest", safeRequest);
-    // Logger.recordOutput("Elevator/State/minRotations", min);
+    Logger.recordOutput("Elevator/State/safeRotations", safeRotations);
     // Logger.recordOutput("Elevator/State/maxRotations", max);
+
     return safeRotations;
   }
 }

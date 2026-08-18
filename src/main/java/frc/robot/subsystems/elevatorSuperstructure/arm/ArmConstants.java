@@ -13,7 +13,7 @@ public class ArmConstants {
   public static final double maxRotations = 1.278;
   // 460 / 360; // these 2 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.681; // 245 / 360;
-  public static final double rotRate = 3; // TODO: adjust when testing for vel changes
+  public static final double rotRate = 0.1; // TODO: adjust when testing for vel changes
   // this is desired cruise velocity
 
   // change later, value is incorrect :(

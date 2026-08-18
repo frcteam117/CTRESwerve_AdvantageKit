@@ -11,7 +11,7 @@ public class WristConstants {
   public static final double maxRotations = 1.069;
   // 385 / 360; // these 3 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.638; // 230/360;
-  public static final double rotRate = 3.0; // TODO: adjust when testing for vel changes
+  public static final double rotRate = 0.1; // TODO: adjust when testing for vel changes
 
   public static final String tuningPrefix = "/Tuning/";
 
