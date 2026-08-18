@@ -16,6 +16,15 @@ public class ElevatorSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+
+    ElevatorConstants.talonFXConfigs.Slot0.kS = ElevatorConstants.tunable_kS.getAsDouble();
+    ElevatorConstants.talonFXConfigs.Slot0.kV = ElevatorConstants.tunable_kV.getAsDouble();
+    ElevatorConstants.talonFXConfigs.Slot0.kA = ElevatorConstants.tunable_kA.getAsDouble();
+    ElevatorConstants.talonFXConfigs.Slot0.kP = ElevatorConstants.tunable_kP.getAsDouble();
+    ElevatorConstants.talonFXConfigs.Slot0.kD = ElevatorConstants.tunable_kD.getAsDouble();
+    ElevatorConstants.talonFXConfigs.Slot0.kG = ElevatorConstants.tunable_kG.getAsDouble();
+
+    io.updateConfig();
   }
 
   public ElevatorInputs getInputs() {

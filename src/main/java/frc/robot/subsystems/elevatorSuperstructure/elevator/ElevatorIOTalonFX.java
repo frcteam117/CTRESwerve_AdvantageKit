@@ -66,10 +66,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double rotations) {
-    // create a Motion Magic request, voltage output
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
-    // configure using gear ratios on real elevator, then make specific commands
     leaderTalon.setControl(m_request.withPosition(rotations));
+  }
+
+  @Override
+  public void updateConfig() {
+    leaderTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
+    followerTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
   }
 }

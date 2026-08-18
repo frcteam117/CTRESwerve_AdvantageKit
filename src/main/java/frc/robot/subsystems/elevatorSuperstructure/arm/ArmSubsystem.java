@@ -15,7 +15,6 @@ public class ArmSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
 
-    // Logger.recordOutput(ArmConstants.tuningLogStart + "kS", ArmConstants.tunable_kS);
     // ArmConstants.talonFXConfigs.Slot0.kS = ArmConstants.tunable_kS.getAsDouble();
     // ArmConstants.talonFXConfigs.Slot0.kV = ArmConstants.tunable_kV.getAsDouble();
     // ArmConstants.talonFXConfigs.Slot0.kA = ArmConstants.tunable_kA.getAsDouble();

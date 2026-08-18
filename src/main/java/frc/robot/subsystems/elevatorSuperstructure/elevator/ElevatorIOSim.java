@@ -135,10 +135,8 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void setPosition(double rotations) {
-    // create a Motion Magic request, voltage output
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
-    // configure using gear ratios on real elevator, then make specific commands
     leaderTalon.setControl(m_request.withPosition(rotations));
   }
 
@@ -150,6 +148,9 @@ public class ElevatorIOSim implements ElevatorIO {
   public DCMotorSim getTalonSimModel() {
     return talonSimModel;
   }
+
+  @Override
+  public void updateConfig() {
+    leaderTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
+  }
 }
-// TODO: ask for help on the sim part, this IO structure isnt one im familiar
-// with and idk what is right/wrong

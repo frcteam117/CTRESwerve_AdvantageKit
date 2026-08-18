@@ -53,4 +53,6 @@ public interface ElevatorIO {
   public default void setPosition(double rotations) {}
 
   public default void setVelocity(double velocityRadPerSec) {}
+
+  public default void updateConfig() {}
 }

@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public class ArmConstants {
   public static final int CANID = 17;
   public static final double gear_ratio = 3.0;
-  public static final String tuningPrefix = "/Tuning/";
   public static final double maxRotations = 1.278;
   // 460 / 360; // these 2 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.681; // 245 / 360;
@@ -22,6 +21,8 @@ public class ArmConstants {
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * length of the arm^2
 
   public static TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
+
+  public static final String tuningPrefix = "/Tuning/";
 
   public static final LoggedNetworkNumber tunable_kS =
       new LoggedNetworkNumber(tuningPrefix + "kS", 0.007);

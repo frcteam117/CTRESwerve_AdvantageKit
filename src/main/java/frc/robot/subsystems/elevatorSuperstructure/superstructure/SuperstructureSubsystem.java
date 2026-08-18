@@ -77,20 +77,22 @@ public class SuperstructureSubsystem extends SubsystemBase {
     return soup.runOnce(
         () ->
             elevator.setNextPosition(
-                SuperstructureUtil.calcSafeElevatorPosition(
-                    elevator.getInputs().getPositionRotations() + ElevatorConstants.rotRate,
-                    arm.getInputs().getPositionRotations(),
-                    wrist.getInputs().getPositionRotations())));
+                // SuperstructureUtil.calcSafeElevatorPosition(
+                elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate // ,
+                // arm.getInputs().getPositionRotations(),
+                // wrist.getInputs().getPositionRotations())
+                ));
   }
 
   public Command RequestLowerElevator(SuperstructureSubsystem soup) {
     return soup.runOnce(
         () ->
             elevator.setNextPosition(
-                SuperstructureUtil.calcSafeElevatorPosition(
-                    elevator.getInputs().getPositionRotations() - ElevatorConstants.rotRate,
-                    arm.getInputs().getPositionRotations(),
-                    wrist.getInputs().getPositionRotations())));
+                // SuperstructureUtil.calcSafeElevatorPosition(
+                elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate // ,
+                // arm.getInputs().getPositionRotations(),
+                // wrist.getInputs().getPositionRotations())
+                ));
   }
 
   // public Command ElevatorTop(SuperstructureSubsystem soup) {
@@ -126,7 +128,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
     wrist.setNextPosition(
         SuperstructureUtil.calcSafeWristPosition(
             requestedRots,
-            elevator.getInputs().getPositionRotations(),
+            elevator.getInputs().getNextPositionRotations(),
             arm.getInputs().getPositionRotations()));
   }
 
@@ -136,7 +138,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
         () ->
             wrist.setNextPosition(
                 SuperstructureUtil.calcSafeWristPosition(
-                    wrist.getInputs().getPositionRotations() + WristConstants.rotRate,
+                    wrist.getInputs().getNextPositionRotations() + WristConstants.rotRate,
                     elevator.getInputs().getPositionRotations(),
                     arm.getInputs().getPositionRotations())));
   }
@@ -146,7 +148,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
         () ->
             wrist.setNextPosition(
                 SuperstructureUtil.calcSafeWristPosition(
-                    wrist.getInputs().getPositionRotations() - WristConstants.rotRate,
+                    wrist.getInputs().getNextPositionRotations() - WristConstants.rotRate,
                     elevator.getInputs().getPositionRotations(),
                     arm.getInputs().getPositionRotations())));
   }
@@ -174,7 +176,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
         () ->
             arm.setNextPosition(
                 SuperstructureUtil.calcSafeArmPosition(
-                    arm.getInputs().getPositionRotations() + ArmConstants.rotRate,
+                    arm.getInputs().getNextPositionRotations() + ArmConstants.rotRate,
                     elevator.getInputs().getPositionRotations(),
                     wrist.getInputs().getPositionRotations())));
   }
@@ -184,7 +186,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
         () ->
             arm.setNextPosition(
                 SuperstructureUtil.calcSafeArmPosition(
-                    arm.getInputs().getPositionRotations() - ArmConstants.rotRate,
+                    arm.getInputs().getNextPositionRotations() - ArmConstants.rotRate,
                     elevator.getInputs().getPositionRotations(),
                     wrist.getInputs().getPositionRotations())));
   }
