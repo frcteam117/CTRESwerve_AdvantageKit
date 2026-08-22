@@ -11,6 +11,7 @@ public class ArmConstants {
   public static final int CANID = 17;
   public static final double gear_ratio = 3.0;
   public static final double maxRotations = 1.278;
+  public static final double allowedPositionErrorRots = 0.02;
   // 460 / 360; // these 2 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.681; // 245 / 360;
   public static final double rotRate = 0.1; // TODO: adjust when testing for vel changes
@@ -31,7 +32,7 @@ public class ArmConstants {
   public static final LoggedNetworkNumber tunable_kA =
       new LoggedNetworkNumber(tuningPrefix + "kA", 0.01);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber(tuningPrefix + "kP", 9); // higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 20); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
       new LoggedNetworkNumber(tuningPrefix + "kD", 0.0001);

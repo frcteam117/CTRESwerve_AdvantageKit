@@ -9,6 +9,7 @@ public class WristConstants {
   public static final double gear_ratio = 3;
 
   public static final double maxRotations = 1.069;
+  public static final double allowedPositionErrorRots = 0.02;
   // 385 / 360; // these 3 are in mechanism rotations (NOT geared up)
   public static final double minRotations = 0.638; // 230/360;
   public static final double rotRate = 0.1; // TODO: adjust when testing for vel changes
@@ -21,20 +22,33 @@ public class WristConstants {
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
+  //   public static final LoggedNetworkNumber tunable_kS =
+  //       new LoggedNetworkNumber(tuningPrefix + "kS", 0.009);
+  //   public static final LoggedNetworkNumber tunable_kV =
+  //       new LoggedNetworkNumber(tuningPrefix + "kV", .25);
+  //   public static final LoggedNetworkNumber tunable_kA =
+  //       new LoggedNetworkNumber(tuningPrefix + "kA", 0);
+  //   public static final LoggedNetworkNumber tunable_kP =
+  //       new LoggedNetworkNumber(tuningPrefix + "kP", 9); // higher = more accurate (less error)
+  //   // no kI
+  //   public static final LoggedNetworkNumber tunable_kD =
+  //       new LoggedNetworkNumber(tuningPrefix + "kD", 1);
+  //   public static final LoggedNetworkNumber tunable_kG =
+  //       new LoggedNetworkNumber(tuningPrefix + "kG", 0.2);
   public static final LoggedNetworkNumber tunable_kS =
-      new LoggedNetworkNumber(tuningPrefix + "kS", 0.009);
+      new LoggedNetworkNumber(tuningPrefix + "kS", 0.007);
   public static final LoggedNetworkNumber tunable_kV =
-      new LoggedNetworkNumber(tuningPrefix + "kV", .25);
+      new LoggedNetworkNumber(tuningPrefix + "kV", 0.7);
   public static final LoggedNetworkNumber tunable_kA =
-      new LoggedNetworkNumber(tuningPrefix + "kA", 0);
+      new LoggedNetworkNumber(tuningPrefix + "kA", 0.01);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber(tuningPrefix + "kP", 50); // higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 20); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
-      new LoggedNetworkNumber(tuningPrefix + "kD", 1);
+      new LoggedNetworkNumber(tuningPrefix + "kD", 0.0001);
   public static final LoggedNetworkNumber tunable_kG =
       new LoggedNetworkNumber(tuningPrefix + "kG", 0.2);
-
+  // TODO: fix
   // set slot 0 gains
   public WristConstants() {
     var slot0Configs = talonFXConfigs.Slot0;

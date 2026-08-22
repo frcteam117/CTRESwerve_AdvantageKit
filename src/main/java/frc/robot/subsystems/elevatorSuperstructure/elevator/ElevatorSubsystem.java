@@ -1,6 +1,6 @@
 package frc.robot.subsystems.elevatorSuperstructure.elevator;
 
-import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO.ElevatorInputs;
+import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO.ElevatorMutInputs;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem {
@@ -16,6 +16,7 @@ public class ElevatorSubsystem {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
+    // Logger.recordOutput("Elevator/State/x_99999999", inputs.getPositionRotations());
 
     ElevatorConstants.talonFXConfigs.Slot0.kS = ElevatorConstants.tunable_kS.getAsDouble();
     ElevatorConstants.talonFXConfigs.Slot0.kV = ElevatorConstants.tunable_kV.getAsDouble();
@@ -27,7 +28,7 @@ public class ElevatorSubsystem {
     io.updateConfig();
   }
 
-  public ElevatorInputs getInputs() {
+  public ElevatorMutInputs getInputs() {
     return inputs;
   }
 

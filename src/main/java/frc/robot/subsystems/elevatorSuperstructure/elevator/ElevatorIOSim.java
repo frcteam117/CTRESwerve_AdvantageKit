@@ -79,6 +79,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     inputs.connected = true;
     inputs.positionRotations = talonSimModel.getAngularPosition().in(Rotations);
+    // Logger.recordOutput("Elevator/State/x_elevatorrotsupdateinputs", inputs.positionRotations);
 
     // this is in RPS, is RPM better?
     inputs.velocityRotationsPerSec =
@@ -135,6 +136,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   @Override
   public void setPosition(double rotations) {
+    // Logger.recordOutput("Elevator/State/x_999999", rotations);
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     leaderTalon.setControl(m_request.withPosition(rotations));

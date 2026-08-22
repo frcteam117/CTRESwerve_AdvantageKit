@@ -1,6 +1,9 @@
 package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 
+import edu.wpi.first.math.MathUtil;
+import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
+import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperstructureUtil {
@@ -83,11 +86,20 @@ public class SuperstructureUtil {
       max = (220 + (20 * ((245 - aDeg) / -230))) / 360;
     }
     //
-    if (requestedRots > min) { // swapped >/< bc wrist is inverted for that bc of wrap around
-      safeRotations = min;
-    }
-    if (requestedRots < max) {
-      safeRotations = max;
+    if (max > min) {
+      if (requestedRots < min) {
+        safeRotations = min;
+      }
+      if (requestedRots > max) {
+        safeRotations = max;
+      }
+    } else {
+      if (requestedRots > min) {
+        safeRotations = min;
+      }
+      if (requestedRots < max) {
+        safeRotations = max;
+      }
     }
 
     Logger.recordOutput("Wrist/State/requestedRots", requestedRots);
@@ -131,11 +143,20 @@ public class SuperstructureUtil {
       max = 475 / 360;
     }
     //
-    if (requestedRots < min) {
-      safeRotations = min;
-    }
-    if (requestedRots > max) {
-      safeRotations = max;
+    if (max > min) {
+      if (requestedRots < min) {
+        safeRotations = min;
+      }
+      if (requestedRots > max) {
+        safeRotations = max;
+      }
+    } else {
+      if (requestedRots > min) {
+        safeRotations = min;
+      }
+      if (requestedRots < max) {
+        safeRotations = max;
+      }
     }
 
     Logger.recordOutput("Arm/State/requestedRotations", requestedRots);
@@ -156,9 +177,28 @@ public class SuperstructureUtil {
     // double min = 0;
     // double max = 0;
     boolean wristSafe =
-        (wristRotations == calcSafeWristPosition(wristRotations, requestedRots, armRotations));
+        MathUtil.isNear(
+            calcSafeWristPosition(wristRotations, requestedRots, armRotations),
+            wristRotations,
+            WristConstants.allowedPositionErrorRots);
+    // Logger.recordOutput(
+    //     "Elevator/State/z_WristExpected",
+    //     calcSafeWristPosition(wristRotations, requestedRots, armRotations));
+    // Logger.recordOutput("Elevator/State/z_WristActual", wristRotations);
+    // Logger.recordOutput("Elevator/State/z_WristTolerance",
+    // WristConstants.allowedPositionErrorRots);
+
     boolean armSafe =
-        (armRotations == calcSafeArmPosition(armRotations, requestedRots, wristRotations));
+        MathUtil.isNear(
+            calcSafeArmPosition(armRotations, requestedRots, wristRotations),
+            armRotations,
+            ArmConstants.allowedPositionErrorRots);
+    // Logger.recordOutput(
+    //     "Elevator/State/y_ArmExpected",
+    //     calcSafeArmPosition(armRotations, requestedRots, wristRotations));
+    // Logger.recordOutput("Elevator/State/y_ArmActual", armRotations);
+    // Logger.recordOutput("Elevator/State/y_ArmTolerance", ArmConstants.allowedPositionErrorRots);
+
     boolean safeRequest = (wristSafe && armSafe) ? true : false;
 
     if (requestedRots > ElevatorConstants.topRotations) {
@@ -170,6 +210,8 @@ public class SuperstructureUtil {
     Logger.recordOutput("Elevator/State/requestedRots", requestedRots);
     Logger.recordOutput("Elevator/State/safeRequest", safeRequest);
     Logger.recordOutput("Elevator/State/safeRotations", safeRotations);
+    Logger.recordOutput("Elevator/State/ArmSafe", armSafe);
+    Logger.recordOutput("Elevator/State/WristSafe", wristSafe);
     // Logger.recordOutput("Elevator/State/maxRotations", max);
 
     return safeRotations;

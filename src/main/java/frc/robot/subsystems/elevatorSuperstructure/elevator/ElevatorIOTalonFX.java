@@ -66,6 +66,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setPosition(double rotations) {
+
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     leaderTalon.setControl(m_request.withPosition(rotations));

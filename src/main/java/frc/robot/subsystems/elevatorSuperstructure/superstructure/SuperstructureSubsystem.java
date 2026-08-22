@@ -10,6 +10,7 @@ import frc.robot.subsystems.elevatorSuperstructure.superstructure.Superstructure
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 public class SuperstructureSubsystem extends SubsystemBase {
 
@@ -30,7 +31,7 @@ public class SuperstructureSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    // Logger.recordOutput("Elevator/State/x_888888", elevator.getInputs().getPositionRotations());
     elevator.periodic();
 
     arm.periodic();
@@ -47,8 +48,11 @@ public class SuperstructureSubsystem extends SubsystemBase {
 
   // default command: set soup to go to their nextPositions
   public Command RunSoupPositions(SuperstructureSubsystem soup) {
+
     return soup.run(
         () -> {
+          Logger.recordOutput(
+              "Elevator/State/x_888888", elevator.getInputs().getNextPositionRotations());
           elevator.getIO().setPosition(elevator.getInputs().getNextPositionRotations());
           arm.getIO().setPosition(arm.getInputs().getNextPositionRotations());
           wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
@@ -72,26 +76,38 @@ public class SuperstructureSubsystem extends SubsystemBase {
             wrist.getInputs().getPositionRotations(),
             arm.getInputs().getPositionRotations()));
   }
-// TODO: it kinda works? debug: elevator wont go past 5 rots & the wrist pos min is not correct
+  // TODO: fix: the damn getter methods DONT FUCKING WORK!!!!!
   public Command RequestRaiseElevator(SuperstructureSubsystem soup) {
-    double safePos =
-        SuperstructureUtil.calcSafeElevatorPosition(
-            elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate,
-            arm.getInputs().getPositionRotations(),
-            wrist.getInputs().getPositionRotations());
-    double safeArmPos =
-        SuperstructureUtil.calcSafeArmPosition(
-            arm.getInputs().getPositionRotations(),
-            safePos,
-            wrist.getInputs().getPositionRotations());
-    double safeWristPos =
-        SuperstructureUtil.calcSafeArmPosition(
-            wrist.getInputs().getPositionRotations(),
-            safePos,
-            arm.getInputs().getPositionRotations());
-    return soup.runOnce(() -> elevator.setNextPosition(safePos))
+    // NOTE TO SELF: the stuff outside the return part of a command? yeah that only runs once at the
+    // start tvt dont put shit there
+    // sorry all of the math is a horrendous mess <3
+    return soup.runOnce(
+            () ->
+                elevator.setNextPosition(
+                    SuperstructureUtil.calcSafeElevatorPosition(
+                        elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate,
+                        arm.getInputs().getPositionRotations(),
+                        wrist.getInputs().getPositionRotations())))
         .andThen(
-            soup.runOnce(() -> ElevatorRequestNewMechanismPositions(safeArmPos, safeWristPos)));
+            soup.runOnce(
+                () ->
+                    ElevatorRequestNewMechanismPositions(
+                        SuperstructureUtil.calcSafeArmPosition(
+                            arm.getInputs().getPositionRotations(),
+                            SuperstructureUtil.calcSafeElevatorPosition(
+                                elevator.getInputs().getNextPositionRotations()
+                                    + ElevatorConstants.rotRate,
+                                arm.getInputs().getPositionRotations(),
+                                wrist.getInputs().getPositionRotations()),
+                            wrist.getInputs().getPositionRotations()),
+                        SuperstructureUtil.calcSafeWristPosition(
+                            wrist.getInputs().getPositionRotations(),
+                            SuperstructureUtil.calcSafeElevatorPosition(
+                                elevator.getInputs().getNextPositionRotations()
+                                    + ElevatorConstants.rotRate,
+                                arm.getInputs().getPositionRotations(),
+                                wrist.getInputs().getPositionRotations()),
+                            arm.getInputs().getPositionRotations()))));
   }
 
   public Command RequestLowerElevator(SuperstructureSubsystem soup) {
@@ -119,6 +135,8 @@ public class SuperstructureSubsystem extends SubsystemBase {
       double requestedArmPositions, double requestedWristPositions) {
     RequestArmPosition(requestedArmPositions);
     RequestWristPosition(requestedWristPositions);
+    Logger.recordOutput(
+        "Elevator/State/x_elevatorrotsfromcommand", elevator.getInputs().getPositionRotations());
   }
 
   // public Command ElevatorTop(SuperstructureSubsystem soup) {
