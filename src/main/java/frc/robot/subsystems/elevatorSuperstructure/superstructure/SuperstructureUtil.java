@@ -139,8 +139,8 @@ public class SuperstructureUtil {
       min = (260 - (15 * scale4((440 - wDeg) / 220))) / 360;
       max = (420 - (55 * scale5((440 - wDeg) / 220))) / 360;
     } else { // if intervals[3] < hDeg <= top
-      min = 260 / 360;
-      max = 475 / 360;
+      min = (260 - (15 * scale4((440 - wDeg) / 220))) / 360;
+      max = 1.319; // 475 / 360; - just doing a number/a number breaks the compiler or sth i think
     }
     //
     if (max > min) {
@@ -161,6 +161,8 @@ public class SuperstructureUtil {
 
     Logger.recordOutput("Arm/State/requestedRotations", requestedRots);
     Logger.recordOutput("Arm/State/safeRotations", safeRotations);
+    Logger.recordOutput("Arm/State/minRotations", min);
+    Logger.recordOutput("Arm/State/maxRotations", max);
 
     return safeRotations;
   }
