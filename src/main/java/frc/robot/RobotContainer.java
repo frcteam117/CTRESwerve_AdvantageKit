@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.can_range.RangeIO;
-import frc.robot.subsystems.can_range.RangeIOCanRange;
 import frc.robot.subsystems.can_range.RangeSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -78,13 +76,13 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0),
                 new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera2Name, VisionConstants.robotToCamera2));
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1) // ,
+                // new VisionIOPhotonVision(
+                //     VisionConstants.camera2Name, VisionConstants.robotToCamera2)
+                );
 
-        range = new RangeSubsystem(new RangeIOCanRange());
-
-        elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
+        range = null;
+        // range = new RangeSubsystem(new RangeIOCanRange());
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
         // implementations
@@ -102,6 +100,7 @@ public class RobotContainer {
         // new ModuleIOTalonFXS(TunerConstants.FrontRight),
         // new ModuleIOTalonFXS(TunerConstants.BackLeft),
         // new ModuleIOTalonFXS(TunerConstants.BackRight));
+        elevator = new ElevatorSubsystem(new ElevatorIOTalonFX());
         break;
 
       case SIM:
@@ -119,9 +118,12 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose));
+                    VisionConstants.camera1Name,
+                    VisionConstants.robotToCamera1,
+                    drive::getPose) // ,
+                // new VisionIOPhotonVisionSim(
+                //     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose)
+                );
         range = null;
         // TODO: vvv implement real sim IO
         elevator =
@@ -143,7 +145,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIO[] {});
        
-        range = new RangeSubsystem(new RangeIO() {});
+        range = null;
         elevator = new ElevatorSubsystem(new ElevatorIO() {});
         break;
     }
