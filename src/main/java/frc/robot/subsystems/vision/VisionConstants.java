@@ -9,6 +9,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class VisionConstants {
@@ -23,9 +24,10 @@ public class VisionConstants {
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 = new Transform3d();
-  public static Transform3d robotToCamera1 = new Transform3d();
-  public static Transform3d robotToCamera2 = new Transform3d();
+  // in meters
+  public static Transform3d robotToCamera0 = new Transform3d(-0.292,0.252,-0.220, new Rotation3d(0, Math.PI / 3, 0));
+  public static Transform3d robotToCamera1 = new Transform3d(0.265,0.244,-0.220, new Rotation3d(0,Math.PI / 3, -Math.PI / 2));
+  public static Transform3d robotToCamera2 = new Transform3d(); // NEED TO ADD
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
