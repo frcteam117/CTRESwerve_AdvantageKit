@@ -383,4 +383,10 @@ public class Drive extends SubsystemBase {
       modules[i].setKVGain(value);
     }
   }
+
+  public void setCoast(boolean coast) {
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setCoastMode(coast);
+    }
+  }
 }

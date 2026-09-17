@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -151,6 +152,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    NamedCommands.registerCommand("turnOnCoast", DriveCommands.setCoastMode(drive, true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -180,6 +183,8 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> -controller.getRightY(),
                 () -> -controller.getRightX()));
+
+    controller.L1().onTrue(DriveCommands.setCoastMode(drive, true));
 
     // Switch to X pattern when X button is pressed
     controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));

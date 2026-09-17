@@ -282,4 +282,24 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.Slot0.kV = value;
     driveTalon.getConfigurator().apply(driveConfig.Slot0);
   }
+
+  @Override
+  public void setCoastMode(boolean mode) {
+    driveConfig.Slot0 = constants.DriveMotorGains;
+    driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
+    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent;
+    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -constants.SlipCurrent;
+    driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
+    driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    driveConfig.MotorOutput.Inverted =
+        constants.DriveMotorInverted
+            ? InvertedValue.Clockwise_Positive
+            : InvertedValue.CounterClockwise_Positive;
+    if (mode) {
+      driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    }
+    tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
+  }
 }

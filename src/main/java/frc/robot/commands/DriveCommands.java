@@ -307,4 +307,8 @@ public class DriveCommands {
     Rotation2d lastAngle = Rotation2d.kZero;
     double gyroDelta = 0.0;
   }
+
+  public static Command setCoastMode(Drive drive, boolean coast) {
+    return Commands.runOnce(() -> drive.setCoast(coast), drive);
+  }
 }

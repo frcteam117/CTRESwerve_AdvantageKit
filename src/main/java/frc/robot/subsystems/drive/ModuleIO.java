@@ -52,4 +52,6 @@ public interface ModuleIO {
   public default void setKDGain(double value) {}
 
   public default void setKVGain(double value) {}
+
+  public default void setCoastMode(boolean coast) {}
 }

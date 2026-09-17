@@ -164,4 +164,8 @@ public class Module {
   public void setKDGain(double value) {
     io.setKDGain(value);
   }
+
+  public void setCoastMode(boolean coast) {
+    io.setCoastMode(coast);
+  }
 }
