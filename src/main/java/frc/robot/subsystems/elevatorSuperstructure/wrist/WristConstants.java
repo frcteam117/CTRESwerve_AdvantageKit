@@ -14,7 +14,7 @@ public class WristConstants {
   public static final double minRotations = 0.638; // 230/360;
   public static final double rotRate = 0.1; // TODO: adjust when testing for vel changes
 
-  public static final String tuningPrefix = "/Tuning/";
+  public static final String tuningPrefix = "/Tuning/Wrist_";
 
   // change later, value is incorrect :(
   // length of arm = ???

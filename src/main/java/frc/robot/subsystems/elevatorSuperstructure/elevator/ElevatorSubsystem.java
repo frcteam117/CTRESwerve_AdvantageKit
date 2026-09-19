@@ -18,14 +18,25 @@ public class ElevatorSubsystem {
     Logger.processInputs("Elevator", inputs);
     // Logger.recordOutput("Elevator/State/x_99999999", inputs.getPositionRotations());
 
-    ElevatorConstants.talonFXConfigs.Slot0.kS = ElevatorConstants.tunable_kS.getAsDouble();
-    ElevatorConstants.talonFXConfigs.Slot0.kV = ElevatorConstants.tunable_kV.getAsDouble();
-    ElevatorConstants.talonFXConfigs.Slot0.kA = ElevatorConstants.tunable_kA.getAsDouble();
-    ElevatorConstants.talonFXConfigs.Slot0.kP = ElevatorConstants.tunable_kP.getAsDouble();
-    ElevatorConstants.talonFXConfigs.Slot0.kD = ElevatorConstants.tunable_kD.getAsDouble();
-    ElevatorConstants.talonFXConfigs.Slot0.kG = ElevatorConstants.tunable_kG.getAsDouble();
+    // there's GOTTA be a better way but hey it works - checking if all the values are the same and
+    // if so not updating
+    if (!(ElevatorConstants.talonFXConfigs.Slot0.kS == ElevatorConstants.tunable_kS.getAsDouble()
+        && ElevatorConstants.talonFXConfigs.Slot0.kV == ElevatorConstants.tunable_kV.getAsDouble()
+        && ElevatorConstants.talonFXConfigs.Slot0.kA == ElevatorConstants.tunable_kA.getAsDouble()
+        && ElevatorConstants.talonFXConfigs.Slot0.kP == ElevatorConstants.tunable_kP.getAsDouble()
+        && ElevatorConstants.talonFXConfigs.Slot0.kD == ElevatorConstants.tunable_kD.getAsDouble()
+        && ElevatorConstants.talonFXConfigs.Slot0.kG
+            == ElevatorConstants.tunable_kG.getAsDouble())) {
 
-    io.updateConfig();
+      ElevatorConstants.talonFXConfigs.Slot0.kS = ElevatorConstants.tunable_kS.getAsDouble();
+      ElevatorConstants.talonFXConfigs.Slot0.kV = ElevatorConstants.tunable_kV.getAsDouble();
+      ElevatorConstants.talonFXConfigs.Slot0.kA = ElevatorConstants.tunable_kA.getAsDouble();
+      ElevatorConstants.talonFXConfigs.Slot0.kP = ElevatorConstants.tunable_kP.getAsDouble();
+      ElevatorConstants.talonFXConfigs.Slot0.kD = ElevatorConstants.tunable_kD.getAsDouble();
+      ElevatorConstants.talonFXConfigs.Slot0.kG = ElevatorConstants.tunable_kG.getAsDouble();
+
+      io.updateConfig();
+    }
   }
 
   public ElevatorMutInputs getInputs() {

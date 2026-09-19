@@ -2,31 +2,26 @@ package frc.robot.subsystems.elevatorSuperstructure.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmSubsystem;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.*;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureIO.SuperstructureInputs;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperstructureSubsystem extends SubsystemBase {
 
   private final ElevatorSubsystem elevator;
-  private final ArmSubsystem arm;
-  private final WristSubsystem wrist;
+  // private final ArmSubsystem arm;
+  // private final WristSubsystem wrist;
 
   private final SuperstructureInputs inputs;
 
-  public SuperstructureSubsystem(ElevatorIO elevatorIO, ArmIO armIO, WristIO wristIO) {
+  public SuperstructureSubsystem(ElevatorIO elevatorIO) { // , ArmIO armIO, WristIO wristIO) {
     // System.out.println("HIJK " + ElevatorConstants.talonFXConfigs.Slot0.kS);
     elevator = new ElevatorSubsystem(elevatorIO);
-    arm = new ArmSubsystem(armIO);
-    wrist = new WristSubsystem(wristIO);
+    // arm = new ArmSubsystem(armIO);
+    // wrist = new WristSubsystem(wristIO);
 
-    inputs = new SuperstructureInputs(elevator.getInputs(), arm.getInputs(), wrist.getInputs());
+    inputs =
+        new SuperstructureInputs(elevator.getInputs()); // , arm.getInputs(), wrist.getInputs());
   }
 
   @Override
@@ -34,9 +29,9 @@ public class SuperstructureSubsystem extends SubsystemBase {
     // Logger.recordOutput("Elevator/State/x_888888", elevator.getInputs().getPositionRotations());
     elevator.periodic();
 
-    arm.periodic();
+    // arm.periodic();
 
-    wrist.periodic();
+    // wrist.periodic();
   }
 
   public SuperstructureInputs getInputs() {
@@ -54,8 +49,8 @@ public class SuperstructureSubsystem extends SubsystemBase {
           Logger.recordOutput(
               "Elevator/State/x_888888", elevator.getInputs().getNextPositionRotations());
           elevator.getIO().setPosition(elevator.getInputs().getNextPositionRotations());
-          arm.getIO().setPosition(arm.getInputs().getNextPositionRotations());
-          wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
+          // arm.getIO().setPosition(arm.getInputs().getNextPositionRotations());
+          // wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
         });
   }
 
@@ -69,171 +64,191 @@ public class SuperstructureSubsystem extends SubsystemBase {
         });
   }
 
-  public void RequestElevatorPosition(double requestedRots) {
-    elevator.setNextPosition(
-        SuperstructureUtil.calcSafeElevatorPosition(
-            requestedRots,
-            wrist.getInputs().getPositionRotations(),
-            arm.getInputs().getPositionRotations()));
-  }
-  // TODO: fix: the damn getter methods DONT FUCKING WORK!!!!!
-  public Command RequestRaiseElevator(SuperstructureSubsystem soup) {
-    // NOTE TO SELF: the stuff outside the return part of a command? yeah that only runs once at the
-    // start tvt dont put shit there
-    // sorry all of the math is a horrendous mess <3
+  // public void RequestElevatorPosition(double requestedRots) {
+  //   elevator.setNextPosition(
+  //       SuperstructureUtil.calcSafeElevatorPosition(
+  //           requestedRots,
+  //           wrist.getInputs().getPositionRotations(),
+  //           arm.getInputs().getPositionRotations()));
+  // }
+
+  // raises/lowers elevator without checking for collision stuff - NOT TO BE USED UNLESS DEBUGGING
+  // BC MAY RISK ROBOT MECHS
+  public Command RaiseElevatorDebugCommand(SuperstructureSubsystem soup) {
     return soup.runOnce(
-            () ->
-                elevator.setNextPosition(
-                    SuperstructureUtil.calcSafeElevatorPosition(
-                        elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate,
-                        arm.getInputs().getPositionRotations(),
-                        wrist.getInputs().getPositionRotations())))
-        .andThen(
-            soup.runOnce(
-                () ->
-                    ElevatorRequestNewMechanismPositions(
-                        SuperstructureUtil.calcSafeArmPosition(
-                            arm.getInputs().getPositionRotations(),
-                            SuperstructureUtil.calcSafeElevatorPosition(
-                                elevator.getInputs().getNextPositionRotations()
-                                    + ElevatorConstants.rotRate,
-                                arm.getInputs().getPositionRotations(),
-                                wrist.getInputs().getPositionRotations()),
-                            wrist.getInputs().getPositionRotations()),
-                        SuperstructureUtil.calcSafeWristPosition(
-                            wrist.getInputs().getPositionRotations(),
-                            SuperstructureUtil.calcSafeElevatorPosition(
-                                elevator.getInputs().getNextPositionRotations()
-                                    + ElevatorConstants.rotRate,
-                                arm.getInputs().getPositionRotations(),
-                                wrist.getInputs().getPositionRotations()),
-                            arm.getInputs().getPositionRotations()))));
+        () ->
+            elevator.setNextPosition(
+                elevator.getInputs().getNextPositionRotations() + ElevatorConstants.rotRate));
   }
 
-  public Command RequestLowerElevator(SuperstructureSubsystem soup) {
-    double safePos =
-        SuperstructureUtil.calcSafeElevatorPosition(
-            elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate,
-            arm.getInputs().getPositionRotations(),
-            wrist.getInputs().getPositionRotations());
-    double safeArmPos =
-        SuperstructureUtil.calcSafeArmPosition(
-            arm.getInputs().getPositionRotations(),
-            safePos,
-            wrist.getInputs().getPositionRotations());
-    double safeWristPos =
-        SuperstructureUtil.calcSafeArmPosition(
-            wrist.getInputs().getPositionRotations(),
-            safePos,
-            arm.getInputs().getPositionRotations());
-    return soup.runOnce(() -> elevator.setNextPosition(safePos))
-        .andThen(
-            soup.runOnce(() -> ElevatorRequestNewMechanismPositions(safeArmPos, safeWristPos)));
+  public Command LowerElevatorDebugCommand(SuperstructureSubsystem soup) {
+    return soup.runOnce(
+        () ->
+            elevator.setNextPosition(
+                elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate));
   }
 
-  public void ElevatorRequestNewMechanismPositions(
-      double requestedArmPositions, double requestedWristPositions) {
-    RequestArmPosition(requestedArmPositions);
-    RequestWristPosition(requestedWristPositions);
-    Logger.recordOutput(
-        "Elevator/State/x_elevatorrotsfromcommand", elevator.getInputs().getPositionRotations());
-  }
-
-  // public Command ElevatorTop(SuperstructureSubsystem soup) {
+  // public Command RequestRaiseElevator(SuperstructureSubsystem soup) {
+  //   // NOTE TO SELF: the stuff outside the return part of a command? yeah that only runs once at
+  // the
+  //   // start tvt dont put shit there
+  //   // sorry all of the math is a horrendous mess <3
   //   return soup.runOnce(
+  //           () ->
+  //               elevator.setNextPosition(
+  //                   SuperstructureUtil.calcSafeElevatorPosition(
+  //                       elevator.getInputs().getNextPositionRotations() +
+  // ElevatorConstants.rotRate,
+  //                       arm.getInputs().getPositionRotations(),
+  //                       wrist.getInputs().getPositionRotations())))
+  //       .andThen(
+  //           soup.runOnce(
+  //               () ->
+  //                   ElevatorRequestNewMechanismPositions(
+  //                       SuperstructureUtil.calcSafeArmPosition(
+  //                           arm.getInputs().getPositionRotations(),
+  //                           SuperstructureUtil.calcSafeElevatorPosition(
+  //                               elevator.getInputs().getNextPositionRotations()
+  //                                   + ElevatorConstants.rotRate,
+  //                               arm.getInputs().getPositionRotations(),
+  //                               wrist.getInputs().getPositionRotations()),
+  //                           wrist.getInputs().getPositionRotations()),
+  //                       SuperstructureUtil.calcSafeWristPosition(
+  //                           wrist.getInputs().getPositionRotations(),
+  //                           SuperstructureUtil.calcSafeElevatorPosition(
+  //                               elevator.getInputs().getNextPositionRotations()
+  //                                   + ElevatorConstants.rotRate,
+  //                               arm.getInputs().getPositionRotations(),
+  //                               wrist.getInputs().getPositionRotations()),
+  //                           arm.getInputs().getPositionRotations()))));
+  // }
+
+  // public Command RequestLowerElevator(SuperstructureSubsystem soup) {
+  //   double safePos =
+  //       SuperstructureUtil.calcSafeElevatorPosition(
+  //           elevator.getInputs().getNextPositionRotations() - ElevatorConstants.rotRate,
+  //           arm.getInputs().getPositionRotations(),
+  //           wrist.getInputs().getPositionRotations());
+  //   double safeArmPos =
+  //       SuperstructureUtil.calcSafeArmPosition(
+  //           arm.getInputs().getPositionRotations(),
+  //           safePos,
+  //           wrist.getInputs().getPositionRotations());
+  //   double safeWristPos =
+  //       SuperstructureUtil.calcSafeArmPosition(
+  //           wrist.getInputs().getPositionRotations(),
+  //           safePos,
+  //           arm.getInputs().getPositionRotations());
+  //   return soup.runOnce(() -> elevator.setNextPosition(safePos))
+  //       .andThen(
+  //           soup.runOnce(() -> ElevatorRequestNewMechanismPositions(safeArmPos, safeWristPos)));
+  // }
+
+  // public void ElevatorRequestNewMechanismPositions(
+  //     double requestedArmPositions, double requestedWristPositions) {
+  //   RequestArmPosition(requestedArmPositions);
+  //   RequestWristPosition(requestedWristPositions);
+  //   Logger.recordOutput(
+  //       "Elevator/State/x_elevatorrotsfromcommand", elevator.getInputs().getPositionRotations());
+  // }
+
+  // // public Command ElevatorTop(SuperstructureSubsystem soup) {
+  // //   return soup.runOnce(
+  // //       () -> {
+  // //         elevator.getIO().setPosition(ElevatorConstants.topRotations);
+  // //       });
+  // // }
+
+  // // public Command ElevatorMid(SuperstructureSubsystem soup) {
+  // //   return soup.runOnce(
+  // //       () -> {
+  // //         elevator.getIO().setPosition(ElevatorConstants.midRotations);
+  // //       });
+  // // }
+
+  // // public Command ElevatorBottom(SuperstructureSubsystem soup) {
+  // //   return soup.runOnce(
+  // //       () -> {
+  // //         elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
+  // //       });
+  // // }
+
+  // /// ===========
+  // public Command RunWristPosition(SuperstructureSubsystem soup) {
+  //   return soup.run(
   //       () -> {
-  //         elevator.getIO().setPosition(ElevatorConstants.topRotations);
+  //         wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
   //       });
   // }
 
-  // public Command ElevatorMid(SuperstructureSubsystem soup) {
+  // public void RequestWristPosition(double requestedRots) {
+  //   wrist.setNextPosition(
+  //       SuperstructureUtil.calcSafeWristPosition(
+  //           requestedRots,
+  //           elevator.getInputs().getNextPositionRotations(),
+  //           arm.getInputs().getPositionRotations()));
+  // }
+
+  // // will this interruption mess up the elevator & arm movement?
+  // public Command RequestRaiseWrist(SuperstructureSubsystem soup) {
   //   return soup.runOnce(
+  //       () ->
+  //           wrist.setNextPosition(
+  //               SuperstructureUtil.calcSafeWristPosition(
+  //                   wrist.getInputs().getNextPositionRotations() + WristConstants.rotRate,
+  //                   elevator.getInputs().getPositionRotations(),
+  //                   arm.getInputs().getPositionRotations())));
+  // }
+
+  // public Command RequestLowerWrist(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () ->
+  //           wrist.setNextPosition(
+  //               SuperstructureUtil.calcSafeWristPosition(
+  //                   wrist.getInputs().getNextPositionRotations() - WristConstants.rotRate,
+  //                   elevator.getInputs().getPositionRotations(),
+  //                   arm.getInputs().getPositionRotations())));
+  // }
+
+  // // :D
+
+  // // ===========
+  // public Command RunArmPosition(SuperstructureSubsystem soup) {
+  //   return soup.run(
   //       () -> {
-  //         elevator.getIO().setPosition(ElevatorConstants.midRotations);
+  //         arm.getIO().setPosition(arm.getInputs().getNextPositionRotations());
   //       });
   // }
 
-  // public Command ElevatorBottom(SuperstructureSubsystem soup) {
-  //   return soup.runOnce(
-  //       () -> {
-  //         elevator.getIO().setPosition(ElevatorConstants.bottomRotations);
-  //       });
+  // public void RequestArmPosition(double requestedRots) {
+  //   arm.setNextPosition(
+  //       SuperstructureUtil.calcSafeArmPosition(
+  //           requestedRots,
+  //           elevator.getInputs().getPositionRotations(),
+  //           wrist.getInputs().getPositionRotations()));
   // }
 
-  /// ===========
-  public Command RunWristPosition(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          wrist.getIO().setPosition(wrist.getInputs().getNextPositionRotations());
-        });
-  }
+  // public Command RequestRaiseArm(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () ->
+  //           arm.setNextPosition(
+  //               SuperstructureUtil.calcSafeArmPosition(
+  //                   arm.getInputs().getNextPositionRotations() + ArmConstants.rotRate,
+  //                   elevator.getInputs().getPositionRotations(),
+  //                   wrist.getInputs().getPositionRotations())));
+  // }
 
-  public void RequestWristPosition(double requestedRots) {
-    wrist.setNextPosition(
-        SuperstructureUtil.calcSafeWristPosition(
-            requestedRots,
-            elevator.getInputs().getNextPositionRotations(),
-            arm.getInputs().getPositionRotations()));
-  }
+  // public Command RequestLowerArm(SuperstructureSubsystem soup) {
+  //   return soup.runOnce(
+  //       () ->
+  //           arm.setNextPosition(
+  //               SuperstructureUtil.calcSafeArmPosition(
+  //                   arm.getInputs().getNextPositionRotations() - ArmConstants.rotRate,
+  //                   elevator.getInputs().getPositionRotations(),
+  //                   wrist.getInputs().getPositionRotations())));
+  // }
 
-  // will this interruption mess up the elevator & arm movement?
-  public Command RequestRaiseWrist(SuperstructureSubsystem soup) {
-    return soup.runOnce(
-        () ->
-            wrist.setNextPosition(
-                SuperstructureUtil.calcSafeWristPosition(
-                    wrist.getInputs().getNextPositionRotations() + WristConstants.rotRate,
-                    elevator.getInputs().getPositionRotations(),
-                    arm.getInputs().getPositionRotations())));
-  }
-
-  public Command RequestLowerWrist(SuperstructureSubsystem soup) {
-    return soup.runOnce(
-        () ->
-            wrist.setNextPosition(
-                SuperstructureUtil.calcSafeWristPosition(
-                    wrist.getInputs().getNextPositionRotations() - WristConstants.rotRate,
-                    elevator.getInputs().getPositionRotations(),
-                    arm.getInputs().getPositionRotations())));
-  }
-
-  // :D
-
-  // ===========
-  public Command RunArmPosition(SuperstructureSubsystem soup) {
-    return soup.run(
-        () -> {
-          arm.getIO().setPosition(arm.getInputs().getNextPositionRotations());
-        });
-  }
-
-  public void RequestArmPosition(double requestedRots) {
-    arm.setNextPosition(
-        SuperstructureUtil.calcSafeArmPosition(
-            requestedRots,
-            elevator.getInputs().getPositionRotations(),
-            wrist.getInputs().getPositionRotations()));
-  }
-
-  public Command RequestRaiseArm(SuperstructureSubsystem soup) {
-    return soup.runOnce(
-        () ->
-            arm.setNextPosition(
-                SuperstructureUtil.calcSafeArmPosition(
-                    arm.getInputs().getNextPositionRotations() + ArmConstants.rotRate,
-                    elevator.getInputs().getPositionRotations(),
-                    wrist.getInputs().getPositionRotations())));
-  }
-
-  public Command RequestLowerArm(SuperstructureSubsystem soup) {
-    return soup.runOnce(
-        () ->
-            arm.setNextPosition(
-                SuperstructureUtil.calcSafeArmPosition(
-                    arm.getInputs().getNextPositionRotations() - ArmConstants.rotRate,
-                    elevator.getInputs().getPositionRotations(),
-                    wrist.getInputs().getPositionRotations())));
-  }
+  // ======= stop here
 
   // public Command ArmUp(SuperstructureSubsystem soup) {
   //   return soup.run(

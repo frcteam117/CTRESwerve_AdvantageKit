@@ -32,18 +32,12 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.arm.ArmConstants;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIO;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOSim;
-import frc.robot.subsystems.elevatorSuperstructure.arm.ArmIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIO;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevatorSuperstructure.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.elevatorSuperstructure.superstructure.SuperstructureSubsystem;
 import frc.robot.subsystems.elevatorSuperstructure.wrist.WristConstants;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIO;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOSim;
-import frc.robot.subsystems.elevatorSuperstructure.wrist.WristIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -69,7 +63,7 @@ public class RobotContainer {
   private final RangeSubsystem range;
   // private final ElevatorSubsystem elevator;
   private final SuperstructureSubsystem soup;
-  private final ClawSubsystem claw;
+//   private final ClawSubsystem claw;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -97,16 +91,16 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0),
                 new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1)//,
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1) // ,
                 // new VisionIOPhotonVision(
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2)
-                    );
+                );
 
         range = new RangeSubsystem(new RangeIOCanRange());
-        claw = new ClawSubsystem(new ClawIOTalonFX());
+        // claw = new ClawSubsystem(new ClawIOTalonFX());
         soup =
             new SuperstructureSubsystem(
-                new ElevatorIOTalonFX(), new ArmIOTalonFX(), new WristIOTalonFX());
+                new ElevatorIOTalonFX()); // , new ArmIOTalonFX(), new WristIOTalonFX());
         // elevator = new ElevatorSubsystem(new ElevatorIOTalonFX() {});
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -142,14 +136,18 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1, drive::getPose)//,
+                    VisionConstants.camera1Name,
+                    VisionConstants.robotToCamera1,
+                    drive::getPose) // ,
                 // new VisionIOPhotonVisionSim(
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose)
                 );
         range = null;
 
-        claw = new ClawSubsystem(new ClawIOSim());
-        soup = new SuperstructureSubsystem(new ElevatorIOSim(), new ArmIOSim(), new WristIOSim());
+        // claw = new ClawSubsystem(new ClawIOSim());
+        soup =
+            new SuperstructureSubsystem(
+                new ElevatorIOSim()); // , new ArmIOSim(), new WristIOSim());
 
         // TODO: vvv implement real sim IO
         // elevator =
@@ -170,8 +168,10 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
         range = new RangeSubsystem(new RangeIO() {});
-        claw = new ClawSubsystem(new ClawIO() {});
-        soup = new SuperstructureSubsystem(new ElevatorIO() {}, new ArmIO() {}, new WristIO() {});
+        // claw = new ClawSubsystem(new ClawIO() {});
+        soup =
+            new SuperstructureSubsystem(
+                new ElevatorIO() {}); // , new ArmIO() {}, new WristIO() {});
 
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});
         // elevator = new ElevatorSubsystem(new ElevatorIO() {});
@@ -215,7 +215,7 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    claw.setDefaultCommand(claw.stop(claw));
+    // claw.setDefaultCommand(claw.stop(claw));
     soup.setDefaultCommand(soup.RunSoupPositions(soup));
 
     // Lock to 0° when A button is held
@@ -242,18 +242,18 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.povLeft().whileTrue(claw.runForward(claw));
+    // controller.povLeft().whileTrue(claw.runForward(claw));
     //
-    controller.povUp().whileTrue(soup.RequestLowerElevator(soup));
-    controller.povDown().whileTrue(soup.RequestRaiseElevator(soup));
+    controller.povUp().whileTrue(soup.LowerElevatorDebugCommand(soup));
+    controller.povDown().whileTrue(soup.RaiseElevatorDebugCommand(soup));
     // controller.povDown().whileTrue(soup.ElevatorBottom(soup));
 
-    controller.povRight().whileTrue(soup.RequestLowerArm(soup));
-    controller.povLeft().whileTrue(soup.RequestRaiseArm(soup));
-    // controller.povDownLeft().whileTrue(soup.ArmUp(soup));
-    //
-    controller.triangle().whileTrue(soup.RequestLowerWrist(soup));
-    controller.circle().whileTrue(soup.RequestRaiseWrist(soup));
+    // controller.povRight().whileTrue(soup.RequestLowerArm(soup));
+    // controller.povLeft().whileTrue(soup.RequestRaiseArm(soup));
+    // // controller.povDownLeft().whileTrue(soup.ArmUp(soup));
+    // //
+    // controller.triangle().whileTrue(soup.RequestLowerWrist(soup));
+    // controller.circle().whileTrue(soup.RequestRaiseWrist(soup));
     // controller.cross().whileTrue(soup.RequestWristPosition(soup));
   }
 

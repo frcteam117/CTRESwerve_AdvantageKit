@@ -23,7 +23,7 @@ public class ArmConstants {
 
   public static TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
-  public static final String tuningPrefix = "/Tuning/";
+  public static final String tuningPrefix = "/Tuning/Arm_";
 
   public static final LoggedNetworkNumber tunable_kS =
       new LoggedNetworkNumber(tuningPrefix + "kS", 0.007);
