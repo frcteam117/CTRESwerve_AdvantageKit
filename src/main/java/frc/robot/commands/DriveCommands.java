@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -311,4 +313,18 @@ public class DriveCommands {
   public static Command setCoastMode(Drive drive, boolean coast) {
     return Commands.runOnce(() -> drive.setCoast(coast), drive);
   }
+
+  // Since we are using a holonomic drivetrain, the rotation component of this pose
+  // represents the goal holonomic rotation
+  static Pose2d targetPose = new Pose2d(3, 5, Rotation2d.fromDegrees(180));
+
+  // Create the constraints to use while pathfinding
+  static PathConstraints constraints =
+      new PathConstraints(2, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
+  public static Command pathfindingCommand =
+      AutoBuilder.pathfindToPose(
+          targetPose, constraints, 0.0 // Goal end velocity in meters/sec
+          );
 }
