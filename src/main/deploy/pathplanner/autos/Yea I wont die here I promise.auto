@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "turnOnCoast"
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 1.0

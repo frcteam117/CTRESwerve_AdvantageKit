@@ -1,3 +1,4 @@
+/*
 package frc.robot.subsystems.can_range;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,3 +17,4 @@ public class RangeSubsystem extends SubsystemBase {
     rangeIO.updateInputs(inputs);
   }
 }
+*/

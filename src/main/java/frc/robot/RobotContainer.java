@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.can_range.RangeSubsystem;
+// import frc.robot.subsystems.can_range.RangeSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -43,7 +43,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final RangeSubsystem range;
+  // private final RangeSubsystem range;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);
@@ -76,7 +76,7 @@ public class RobotContainer {
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2)
                 );
 
-        range = null;
+        // range = null;
         // range = new RangeSubsystem(new RangeIOCanRange());
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -118,7 +118,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose)
                 );
-        range = null;
+        // range = null;
         break;
 
       default:
@@ -132,7 +132,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
-        range = null;
+        // range = null;
         // range = new RangeSubsystem(new RangeIO() {});
         break;
     }
@@ -189,6 +189,9 @@ public class RobotContainer {
                 () -> -controller.getRightX()));
 
     controller.L1().onTrue(DriveCommands.setCoastMode(drive, true));
+
+    controller.L2().onTrue(DriveCommands.pathFind(drive));
+    controller.L2().onFalse(DriveCommands.cancelPath(drive));
 
     // Switch to X pattern when X button is pressed
     controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));

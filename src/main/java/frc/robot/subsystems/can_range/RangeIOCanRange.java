@@ -1,3 +1,4 @@
+/*
 package frc.robot.subsystems.can_range;
 
 import com.ctre.phoenix6.hardware.CANrange;
@@ -14,3 +15,4 @@ public class RangeIOCanRange implements RangeIO {
     inputs.connected = canRange.isConnected();
   }
 }
+*/

@@ -316,15 +316,30 @@ public class DriveCommands {
 
   // Since we are using a holonomic drivetrain, the rotation component of this pose
   // represents the goal holonomic rotation
-  static Pose2d targetPose = new Pose2d(3, 5, Rotation2d.fromDegrees(180));
+  static Pose2d targetPose = new Pose2d(14, 3.2, Rotation2d.fromDegrees(180));
+  // static Pose2d targetPoseBlue = new Pose2d(16.54 - 3, 8.07 - 5, Rotation2d.fromDegrees(180));
 
   // Create the constraints to use while pathfinding
   static PathConstraints constraints =
       new PathConstraints(2, 2.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   // Since AutoBuilder is configured, we can use it to build pathfinding commands
+  /*
+  public static Command pathfindingCommandRed =
+      AutoBuilder.pathfindToPose(
+          targetPoseRed, constraints, 0.0 // Goal end velocity in meters/sec
+          );
+  */
   public static Command pathfindingCommand =
       AutoBuilder.pathfindToPose(
           targetPose, constraints, 0.0 // Goal end velocity in meters/sec
           );
+
+  public static Command pathFind(Drive drive) {
+    return pathfindingCommand;
+  }
+
+  public static Command cancelPath(Drive drive) {
+    return Commands.runOnce(drive::stop, drive);
+  }
 }

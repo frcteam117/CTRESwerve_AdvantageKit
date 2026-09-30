@@ -1,3 +1,4 @@
+/*
 package frc.robot.subsystems.can_range;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -11,3 +12,4 @@ public interface RangeIO {
 
   public default void updateInputs(RangeIOInputs inputs) {}
 }
+*/
