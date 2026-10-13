@@ -21,10 +21,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.can_range.RangeIO;
 import frc.robot.subsystems.can_range.RangeIOCanRange;
 import frc.robot.subsystems.can_range.RangeSubsystem;
-import frc.robot.subsystems.claw.ClawIO;
-import frc.robot.subsystems.claw.ClawIOSim;
-import frc.robot.subsystems.claw.ClawIOTalonFX;
-import frc.robot.subsystems.claw.ClawSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -63,7 +59,7 @@ public class RobotContainer {
   private final RangeSubsystem range;
   // private final ElevatorSubsystem elevator;
   private final SuperstructureSubsystem soup;
-//   private final ClawSubsystem claw;
+  //   private final ClawSubsystem claw;
 
   // Controller
   private final CommandPS5Controller controller = new CommandPS5Controller(0);

@@ -12,10 +12,10 @@ public class ElevatorConstants {
   //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
   // down)
   public static final double bottomRotations = 0;
-  public static final double rotRate = 5.0; // TODO: adjust when testing for vel changes
+  public static final double rotRate = 5; // 5.0; // TODO: adjust when testing for vel changes
 
   public static final double gear_ratio =
-      0.375; // TODO: change, and add rads -> mps conversion to elevator inputs
+      9.0; // TODO: change, and add rads -> mps conversion to elevator inputs
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * pulley radius^2
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
@@ -23,18 +23,18 @@ public class ElevatorConstants {
   public static final String tuningPrefix = "/Tuning/Elevator_";
 
   public static final LoggedNetworkNumber tunable_kS =
-      new LoggedNetworkNumber(tuningPrefix + "kS", 0.0004);
+      new LoggedNetworkNumber(tuningPrefix + "kS", 6);
   public static final LoggedNetworkNumber tunable_kV =
-      new LoggedNetworkNumber(tuningPrefix + "kV", 0.001);
+      new LoggedNetworkNumber(tuningPrefix + "kV", 5);
   public static final LoggedNetworkNumber tunable_kA =
-      new LoggedNetworkNumber(tuningPrefix + "kA", 0);
+      new LoggedNetworkNumber(tuningPrefix + "kA", 6);
   public static final LoggedNetworkNumber tunable_kP =
       new LoggedNetworkNumber(tuningPrefix + "kP", 0.08); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
       new LoggedNetworkNumber(tuningPrefix + "kD", 0);
   public static final LoggedNetworkNumber tunable_kG =
-      new LoggedNetworkNumber(tuningPrefix + "kG", 0.01); // 0.01
+      new LoggedNetworkNumber(tuningPrefix + "kG", 6); // 0.01
   // set slot 0 gains
   public ElevatorConstants() {
     var slot0Configs = talonFXConfigs.Slot0;
