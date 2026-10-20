@@ -18,18 +18,18 @@ import frc.robot.TunerConstants;
 public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX
       leaderTalon; // = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
-  private final TalonFX
-      followerTalon; // = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
+  // private final TalonFX
+  //     followerTalon; // = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
 
   public ElevatorIOTalonFX() {
     leaderTalon = new TalonFX(ElevatorConstants.leaderCANID, TunerConstants.kCANBus);
-    followerTalon = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
+    // followerTalon = new TalonFX(ElevatorConstants.followerCANID, TunerConstants.kCANBus);
 
-    followerTalon.setControl(
-        new Follower(ElevatorConstants.leaderCANID, MotorAlignmentValue.Aligned));
+    // followerTalon.setControl(
+    //     new Follower(ElevatorConstants.leaderCANID, MotorAlignmentValue.Aligned));
 
     leaderTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
-    followerTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
+    // followerTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
   }
 
   @Override
@@ -75,6 +75,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateConfig() {
     leaderTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
-    followerTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
+    // followerTalon.getConfigurator().apply(ElevatorConstants.talonFXConfigs);
   }
 }

@@ -1,16 +1,16 @@
-package frc.robot.subsystems.can_range;
+// package frc.robot.subsystems.can_range;
 
-import com.ctre.phoenix6.hardware.CANrange;
-import frc.robot.generated.TunerConstants;
+// import com.ctre.phoenix6.hardware.CANrange;
+// import frc.robot.generated.TunerConstants;
 
-public class RangeIOCanRange implements RangeIO {
-  CANrange canRange = new CANrange(15, TunerConstants.kCANBus);
+// public class RangeIOCanRange implements RangeIO {
+//   CANrange canRange = new CANrange(15, TunerConstants.kCANBus);
 
-  public RangeIOCanRange() {}
+//   public RangeIOCanRange() {}
 
-  @Override
-  public void updateInputs(RangeIOInputs inputs) {
-    inputs.distance = canRange.getDistance().getValueAsDouble();
-    inputs.connected = canRange.isConnected();
-  }
-}
+//   @Override
+//   public void updateInputs(RangeIOInputs inputs) {
+//     inputs.distance = canRange.getDistance().getValueAsDouble();
+//     inputs.connected = canRange.isConnected();
+//   }
+// }

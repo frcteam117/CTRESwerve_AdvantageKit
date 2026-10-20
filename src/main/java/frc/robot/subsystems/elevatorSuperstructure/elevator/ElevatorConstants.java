@@ -23,18 +23,18 @@ public class ElevatorConstants {
   public static final String tuningPrefix = "/Tuning/Elevator_";
 
   public static final LoggedNetworkNumber tunable_kS =
-      new LoggedNetworkNumber(tuningPrefix + "kS", 6);
+      new LoggedNetworkNumber(tuningPrefix + "kS", 0);
   public static final LoggedNetworkNumber tunable_kV =
-      new LoggedNetworkNumber(tuningPrefix + "kV", 5);
+      new LoggedNetworkNumber(tuningPrefix + "kV", 0);
   public static final LoggedNetworkNumber tunable_kA =
-      new LoggedNetworkNumber(tuningPrefix + "kA", 6);
+      new LoggedNetworkNumber(tuningPrefix + "kA", 0);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber(tuningPrefix + "kP", 0.08); // higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 0); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
       new LoggedNetworkNumber(tuningPrefix + "kD", 0);
   public static final LoggedNetworkNumber tunable_kG =
-      new LoggedNetworkNumber(tuningPrefix + "kG", 6); // 0.01
+      new LoggedNetworkNumber(tuningPrefix + "kG", 0); // 0.0102
   // set slot 0 gains
   public ElevatorConstants() {
     var slot0Configs = talonFXConfigs.Slot0;

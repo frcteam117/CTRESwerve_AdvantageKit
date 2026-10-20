@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.can_range.RangeIO;
-import frc.robot.subsystems.can_range.RangeIOCanRange;
-import frc.robot.subsystems.can_range.RangeSubsystem;
+// import frc.robot.subsystems.can_range.RangeIO;
+// import frc.robot.subsystems.can_range.RangeIOCanRange;
+// import frc.robot.subsystems.can_range.RangeSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -56,7 +56,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final RangeSubsystem range;
+  //   private final RangeSubsystem range;
   // private final ElevatorSubsystem elevator;
   private final SuperstructureSubsystem soup;
   //   private final ClawSubsystem claw;
@@ -92,7 +92,7 @@ public class RobotContainer {
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2)
                 );
 
-        range = new RangeSubsystem(new RangeIOCanRange());
+        // range = new RangeSubsystem(new RangeIOCanRange());
         // claw = new ClawSubsystem(new ClawIOTalonFX());
         soup =
             new SuperstructureSubsystem(
@@ -138,7 +138,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(
                 //     VisionConstants.camera2Name, VisionConstants.robotToCamera2, drive::getPose)
                 );
-        range = null;
+        // range = null;
 
         // claw = new ClawSubsystem(new ClawIOSim());
         soup =
@@ -163,7 +163,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO[] {});
 
-        range = new RangeSubsystem(new RangeIO() {});
+        // range = new RangeSubsystem(new RangeIO() {});
         // claw = new ClawSubsystem(new ClawIO() {});
         soup =
             new SuperstructureSubsystem(
