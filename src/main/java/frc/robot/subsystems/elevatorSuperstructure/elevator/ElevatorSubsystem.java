@@ -34,7 +34,6 @@ public class ElevatorSubsystem {
       ElevatorConstants.talonFXConfigs.Slot0.kP = ElevatorConstants.tunable_kP.getAsDouble();
       ElevatorConstants.talonFXConfigs.Slot0.kD = ElevatorConstants.tunable_kD.getAsDouble();
       ElevatorConstants.talonFXConfigs.Slot0.kG = ElevatorConstants.tunable_kG.getAsDouble();
-
       io.updateConfig();
     }
   }

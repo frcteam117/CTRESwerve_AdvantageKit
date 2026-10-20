@@ -5,8 +5,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class ElevatorConstants {
-  public static final int leaderCANID = 14;
-  public static final int followerCANID = 15;
+  public static final int leaderCANID = 15;
+  public static final int followerCANID = 14;
   // TODO: adjust these for the in -> rot calculation
   public static final double topRotations = 21.22;
   //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
@@ -19,6 +19,7 @@ public class ElevatorConstants {
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * pulley radius^2
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
+  public static final TalonFXConfiguration talonFXFollowerConfigs = new TalonFXConfiguration();
 
   public static final String tuningPrefix = "/Tuning/Elevator_";
 
