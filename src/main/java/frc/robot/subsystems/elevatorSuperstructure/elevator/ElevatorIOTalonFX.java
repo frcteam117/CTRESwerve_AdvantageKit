@@ -10,6 +10,9 @@ package frc.robot.subsystems.elevatorSuperstructure.elevator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.controls.Follower;
+
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.TunerConstants;
 
