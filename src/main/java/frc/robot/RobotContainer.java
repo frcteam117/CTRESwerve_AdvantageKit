@@ -240,8 +240,8 @@ public class RobotContainer {
 
     // controller.povLeft().whileTrue(claw.runForward(claw));
     //
-    controller.povUp().whileTrue(soup.LowerElevatorDebugCommand(soup));
-    controller.povDown().whileTrue(soup.RaiseElevatorDebugCommand(soup));
+    controller.povUp().whileTrue(soup.RaiseElevatorDebugCommand(soup));
+    controller.povDown().whileTrue(soup.LowerElevatorDebugCommand(soup));
     // controller.povDown().whileTrue(soup.ElevatorBottom(soup));
 
     // controller.povRight().whileTrue(soup.RequestLowerArm(soup));

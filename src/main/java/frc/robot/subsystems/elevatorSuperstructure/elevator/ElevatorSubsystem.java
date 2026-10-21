@@ -47,6 +47,13 @@ public class ElevatorSubsystem {
   }
 
   public void setNextPosition(double safeRotations) {
-    inputs.nextPositionRotations = safeRotations;
+    double debugSafeRots = safeRotations;
+    if (debugSafeRots < ElevatorConstants.bottomRotations) {
+      debugSafeRots = 0;
+    }
+    if (debugSafeRots > ElevatorConstants.topRotations) {
+      debugSafeRots = ElevatorConstants.topRotations;
+    }
+    inputs.nextPositionRotations = debugSafeRots;
   }
 }

@@ -8,14 +8,15 @@ public class ElevatorConstants {
   public static final int leaderCANID = 15;
   public static final int followerCANID = 14;
   // TODO: adjust these for the in -> rot calculation
-  public static final double topRotations = 21.22;
+  public static final double topRotations =
+      24.45; // probably incorrect value, maybe must divide by 3. or measure manually
   //   public static final int midRotations = 50; // these 3 are in mechanism rotations (NOT geared
   // down)
   public static final double bottomRotations = 0;
   public static final double rotRate = 5; // 5.0; // TODO: adjust when testing for vel changes
 
   public static final double gear_ratio =
-      9.0; // TODO: change, and add rads -> mps conversion to elevator inputs
+      3.0; // TODO: change, and add rads -> mps conversion to elevator inputs
   public static final double mechanismMOI = 0.005; // the carriage mass in kg * pulley radius^2
 
   public static final TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
@@ -26,16 +27,16 @@ public class ElevatorConstants {
   public static final LoggedNetworkNumber tunable_kS =
       new LoggedNetworkNumber(tuningPrefix + "kS", 0);
   public static final LoggedNetworkNumber tunable_kV =
-      new LoggedNetworkNumber(tuningPrefix + "kV", 0);
+      new LoggedNetworkNumber(tuningPrefix + "kV", 0.3);
   public static final LoggedNetworkNumber tunable_kA =
       new LoggedNetworkNumber(tuningPrefix + "kA", 0);
   public static final LoggedNetworkNumber tunable_kP =
-      new LoggedNetworkNumber(tuningPrefix + "kP", 0); // higher = more accurate (less error)
+      new LoggedNetworkNumber(tuningPrefix + "kP", 15); // higher = more accurate (less error)
   // no kI
   public static final LoggedNetworkNumber tunable_kD =
       new LoggedNetworkNumber(tuningPrefix + "kD", 0);
   public static final LoggedNetworkNumber tunable_kG =
-      new LoggedNetworkNumber(tuningPrefix + "kG", 0); // 0.0102
+      new LoggedNetworkNumber(tuningPrefix + "kG", 0.28); // 0.0102
   // set slot 0 gains
   public ElevatorConstants() {
     var slot0Configs = talonFXConfigs.Slot0;
