@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -330,6 +329,7 @@ public class DriveCommands {
           targetPoseRed, constraints, 0.0 // Goal end velocity in meters/sec
           );
   */
+  /*
   public static Command pathfindingCommand =
       AutoBuilder.pathfindToPose(
           targetPose, constraints, 0.0 // Goal end velocity in meters/sec
@@ -342,4 +342,5 @@ public class DriveCommands {
   public static Command cancelPath(Drive drive) {
     return Commands.runOnce(drive::stop, drive);
   }
+    */
 }

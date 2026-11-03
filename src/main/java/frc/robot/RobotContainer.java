@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SimpleDriveToPose;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.can_range.RangeSubsystem;
 import frc.robot.subsystems.drive.Drive;
@@ -43,6 +45,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final SimpleDriveToPose drivetoPose;
   // private final RangeSubsystem range;
 
   // Controller
@@ -158,7 +161,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("turnOnCoast", DriveCommands.setCoastMode(drive, true));
 
+    Translation2d alignPose2dtrans = new Translation2d(1, 1);
+    Rotation2d alightPose2drotat = new Rotation2d(0.0);
+    Pose2d alignPose2d = new Pose2d(alignPose2dtrans, alightPose2drotat);
     // Configure the button bindings
+    drivetoPose = new SimpleDriveToPose(drive, alignPose2d);
     configureButtonBindings();
   }
 
@@ -190,8 +197,10 @@ public class RobotContainer {
 
     controller.L1().onTrue(DriveCommands.setCoastMode(drive, true));
 
-    controller.L2().onTrue(DriveCommands.pathFind(drive));
-    controller.L2().onFalse(DriveCommands.cancelPath(drive));
+    // controller.L2().onTrue(DriveCommands.pathFind(drive));
+    // controller.L2().onFalse(DriveCommands.cancelPath(drive));
+
+    controller.povDown().whileTrue(drivetoPose);
 
     // Switch to X pattern when X button is pressed
     controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));
