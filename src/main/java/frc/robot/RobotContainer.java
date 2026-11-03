@@ -161,7 +161,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("turnOnCoast", DriveCommands.setCoastMode(drive, true));
 
-    Translation2d alignPose2dtrans = new Translation2d(1, 1);
+    Translation2d alignPose2dtrans = new Translation2d(15, 6);
     Rotation2d alightPose2drotat = new Rotation2d(0.0);
     Pose2d alignPose2d = new Pose2d(alignPose2dtrans, alightPose2drotat);
     // Configure the button bindings
