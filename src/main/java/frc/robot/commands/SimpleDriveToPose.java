@@ -15,12 +15,12 @@ public class SimpleDriveToPose extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> targetPoseSupplier;
   // Translation controller drives distance error toward 0
-  private final PIDController translationController = new PIDController(2.5, 0.0, 0.0);
+  private final PIDController translationController = new PIDController(3.5, 0.3, 0.0);
   // Profiled PID for heading rotation
   private final ProfiledPIDController headingController =
       new ProfiledPIDController(
-          3.5,
-          0.0,
+          4.5,
+          0.3,
           0.0,
           new TrapezoidProfile.Constraints(
               Math.PI * 2, Math.PI * 4) // Max velocity (rad/s), max acceleration (rad/s^2)
@@ -58,7 +58,7 @@ public class SimpleDriveToPose extends Command {
     // Distance error is positive, so calculate speed needed to close distance:
     double linearVelocityScalar = Math.abs(translationController.calculate(distanceError, 0.0));
     linearVelocityScalar =
-        MathUtil.clamp(linearVelocityScalar, 0.0, drive.getMaxLinearSpeedMetersPerSec()/2);
+        MathUtil.clamp(linearVelocityScalar, 0.0, drive.getMaxLinearSpeedMetersPerSec() / 2);
     // 3. Convert scalar velocity to field-relative X and Y components
     double xVelocity = 0.0;
     double yVelocity = 0.0;

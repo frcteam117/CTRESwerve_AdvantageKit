@@ -111,8 +111,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
+                // new VisionIOPhotonVisionSim(
+                //    VisionConstants.camera0Name, VisionConstants.robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.camera1Name,
                     VisionConstants.robotToCamera1,
@@ -196,7 +196,7 @@ public class RobotContainer {
     // controller.L2().onTrue(DriveCommands.pathFind(drive));
     // controller.L2().onFalse(DriveCommands.cancelPath(drive));
 
-    controller.povDown().whileTrue(alignPoses.drivetoPose1);
+    controller.povDown().whileTrue(alignPoses.Sequence123());
 
     // Switch to X pattern when X button is pressed
     controller.cross().onTrue(Commands.runOnce(drive::stopWithX, drive));

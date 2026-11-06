@@ -3,6 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 
 public class AlignPoses {
@@ -16,25 +18,25 @@ public class AlignPoses {
 
   public AlignPoses(Drive drive) {
     Translation2d alignPose2dtrans1 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat1 = new Rotation2d(0.0);
+    Rotation2d alightPose2drotat1 = new Rotation2d(Units.degreesToRadians(0));
 
-    Translation2d alignPose2dtrans2 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat2 = new Rotation2d(0.0);
+    Translation2d alignPose2dtrans2 = new Translation2d(14.1, 5.3);
+    Rotation2d alightPose2drotat2 = new Rotation2d(Units.degreesToRadians(67));
 
-    Translation2d alignPose2dtrans3 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat3 = new Rotation2d(0.0);
+    Translation2d alignPose2dtrans3 = new Translation2d(13.9, 6.8);
+    Rotation2d alightPose2drotat3 = new Rotation2d(Units.degreesToRadians(180));
 
     Translation2d alignPose2dtrans4 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat4 = new Rotation2d(0.0);
+    Rotation2d alightPose2drotat4 = new Rotation2d(Units.degreesToRadians(0));
 
     Translation2d alignPose2dtrans5 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat5 = new Rotation2d(0.0);
+    Rotation2d alightPose2drotat5 = new Rotation2d(Units.degreesToRadians(0));
 
     Translation2d alignPose2dtrans6 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat6 = new Rotation2d(0.0);
+    Rotation2d alightPose2drotat6 = new Rotation2d(Units.degreesToRadians(0));
 
     Translation2d alignPose2dtrans7 = new Translation2d(15, 6);
-    Rotation2d alightPose2drotat7 = new Rotation2d(0.0);
+    Rotation2d alightPose2drotat7 = new Rotation2d(Units.degreesToRadians(0));
 
     Pose2d alignPose1 = new Pose2d(alignPose2dtrans1, alightPose2drotat1);
     drivetoPose1 = new SimpleDriveToPose(drive, alignPose1);
@@ -56,5 +58,9 @@ public class AlignPoses {
 
     Pose2d alignPose7 = new Pose2d(alignPose2dtrans7, alightPose2drotat7);
     drivetoPose7 = new SimpleDriveToPose(drive, alignPose7);
+  }
+
+  public Command Sequence123() {
+    return drivetoPose1.andThen(drivetoPose2).andThen(drivetoPose3);
   }
 }
