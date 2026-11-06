@@ -58,7 +58,7 @@ public class SimpleDriveToPose extends Command {
     // Distance error is positive, so calculate speed needed to close distance:
     double linearVelocityScalar = Math.abs(translationController.calculate(distanceError, 0.0));
     linearVelocityScalar =
-        MathUtil.clamp(linearVelocityScalar, 0.0, drive.getMaxLinearSpeedMetersPerSec() / 2);
+        MathUtil.clamp(linearVelocityScalar, 0.0, drive.getMaxLinearSpeedMetersPerSec()/2);
     // 3. Convert scalar velocity to field-relative X and Y components
     double xVelocity = 0.0;
     double yVelocity = 0.0;
