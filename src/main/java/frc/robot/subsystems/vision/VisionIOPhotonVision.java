@@ -12,6 +12,12 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +35,33 @@ public class VisionIOPhotonVision implements VisionIO {
    * @param name The configured name of the camera.
    * @param robotToCamera The 3D position of the camera relative to the robot.
    */
+    private final NetworkTableInstance nt = NetworkTableInstance.getDefault();
+  NetworkTable table = nt.getTable("RubikPiDetectionData");
+  
+  NetworkTable jessie1SubTable = table.getSubTable("Jessie1Results");
+            DoubleSubscriber numResultsSub1 = jessie1SubTable.getDoubleTopic("NumberOfResults").subscribe(0.0);
+            DoubleArraySubscriber confidencesSub1 = jessie1SubTable.getDoubleArrayTopic("Confidences").subscribe(new double[0]);
+            DoubleArraySubscriber class_idsSub1 = jessie1SubTable.getDoubleArrayTopic("ClassIDs").subscribe(new double[0]);
+            DoubleArraySubscriber widthsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultWidths").subscribe(new double[0]);
+            DoubleArraySubscriber heightsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultHeights").subscribe(new double[0]);
+            // DoubleArraySubscriber angles = jessie1SubTable.getDoubleArrayTopic("ResultsAngles").subscribe(new double[0]); 
+            // not really important for a game where the pieces are spheres ^^^
+            DoubleArraySubscriber centerXsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultCenterXs").subscribe(new double[0]);
+            DoubleArraySubscriber centerYsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultCenterYs").subscribe(new double[0]);
+            //===
+  NetworkTable jessie2SubTable = table.getSubTable("Jessie2Results");
+            DoubleSubscriber numResultsSub2 = jessie2SubTable.getDoubleTopic("NumberOfResults").subscribe(0.0);
+            DoubleArraySubscriber confidencesSub2 = jessie2SubTable.getDoubleArrayTopic("Confidences").subscribe(new double[0]);
+            DoubleArraySubscriber class_idsSub2 = jessie2SubTable.getDoubleArrayTopic("ClassIDs").subscribe(new double[0]);
+            DoubleArraySubscriber widthsSub2 = jessie2SubTable.getDoubleArrayTopic("ResultWidths").subscribe(new double[0]);
+            DoubleArraySubscriber heightsSub2 = jessie2SubTable.getDoubleArrayTopic("ResultHeights").subscribe(new double[0]);
+            // DoubleArraySubscriber angles = jessie2SubTable.getDoubleArrayTopic("ResultsAngles").subscribe(new double[0]); 
+            // not really important for a game where the pieces are spheres ^^^
+            DoubleArraySubscriber centerXsSub2 = jessie2SubTable.getDoubleArrayTopic("ResultCenterXs").subscribe(new double[0]);
+            DoubleArraySubscriber centerYsSub2 = jessie2SubTable.getDoubleArrayTopic("ResultCenterYs").subscribe(new double[0]);
+  //
+
+
   public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
     camera = new PhotonCamera(name);
     this.robotToCamera = robotToCamera;
@@ -107,6 +140,54 @@ public class VisionIOPhotonVision implements VisionIO {
                   PoseObservationType.PHOTONVISION)); // Observation type
         }
       }
+
+      // object detection:
+      // if else bc camera 0 is dead and to separate the results by camera
+       if (camera.getName().equals("Jessie1")) {
+        List<TFLiteResult> results1 = new ArrayList<>();
+        inputs.numDetections_Jessie1 = (int) numResultsSub1.get();
+        // declaring lists here to safe memory
+        double[] confs = confidencesSub1.get();
+        double[] class_ids = class_idsSub1.get();
+        double[] widths = widthsSub1.get();
+        double[] heights = heightsSub1.get();
+        double[] centerXs = centerXsSub1.get();
+        double[] centerYs = centerYsSub1.get();
+        for (int i = 0; i < numResultsSub1.get()-1; i++) {
+          results1.add(new TFLiteResult(
+            confs[i],
+            class_ids[i], 
+            widths[i], 
+            heights[i],
+            centerXs[i], 
+            centerYs[i]));
+        }
+
+        inputs.detectionResults_Jessie1 = results1;
+       }
+       else if (camera.getName().equals("Jessie2")) {
+        List<TFLiteResult> results2 = new ArrayList<>();
+        inputs.numDetections_Jessie2 = (int) numResultsSub2.get();
+        // declaring lists here to safe memory
+        double[] confs = confidencesSub2.get();
+        double[] class_ids = class_idsSub2.get();
+        double[] widths = widthsSub2.get();
+        double[] heights = heightsSub2.get();
+        double[] centerXs = centerXsSub2.get();
+        double[] centerYs = centerYsSub2.get();
+        for (int i = 0; i < numResultsSub2.get()-1; i++) {
+          results2.add(new TFLiteResult(
+            confs[i],
+            class_ids[i], 
+            widths[i], 
+            heights[i],
+            centerXs[i], 
+            centerYs[i]));
+        }
+
+        inputs.detectionResults_Jessie2 = results2;
+       }
+      //
     }
 
     // Save pose observations to inputs object
