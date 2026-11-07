@@ -9,10 +9,6 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
@@ -22,13 +18,13 @@ public interface VisionIO {
     public TargetObservation latestTargetObservation =
         new TargetObservation(Rotation2d.kZero, Rotation2d.kZero);
     public PoseObservation[] poseObservations = new PoseObservation[0];
-    // public TFLiteResult[] detectionResults_Jessie0 = new TFLiteResult[0]; // jessie 0 is dead rn rip
-    public List<TFLiteResult> detectionResults_Jessie1 = new ArrayList<>();
-    public List<TFLiteResult> detectionResults_Jessie2 = new ArrayList<>();
+    // public TFLiteResult[] detectionResults_Jessie0 = new TFLiteResult[0]; // jessie 0 is dead rn
+    // rip
+    public TFLiteResult[] detectionResults_Jessie1 = new TFLiteResult[0];
+    public TFLiteResult[] detectionResults_Jessie2 = new TFLiteResult[0];
     public int numDetections_Jessie1 = 0;
     public int numDetections_Jessie2 = 0;
     public int[] tagIds = new int[0];
-
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */
@@ -42,11 +38,12 @@ public interface VisionIO {
       int tagCount,
       double averageTagDistance,
       PoseObservationType type) {}
-  /** a TFLite result: confidence, class id, width, height (screen coords), centerX, centerY (screen coords) */
+  /**
+   * a TFLite result: confidence, class id, width, height (screen coords), centerX, centerY (screen
+   * coords)
+   */
   public static record TFLiteResult(
-      double conf, double class_id, 
-      double width, double height, 
-      double centerX, double centerY) {}
+      double conf, double class_id, double width, double height, double centerX, double centerY) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

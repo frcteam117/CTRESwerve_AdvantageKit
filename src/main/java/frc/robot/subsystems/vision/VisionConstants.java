@@ -11,8 +11,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.DoubleSubscriber;
 
 public class VisionConstants {
   // AprilTag layout
@@ -51,20 +49,27 @@ public class VisionConstants {
         1.0 // Camera 2
       };
 
-    //   DoubleSubscriber numResultsSub1 = jessie1SubTable.getDoubleTopic("NumberOfResults").subscribe(0.0);
-    //         DoubleArraySubscriber confidencesSub1 = jessie1SubTable.getDoubleArrayTopic("Confidences").subscribe(new double[0]);
-    //         DoubleArraySubscriber class_idsSub1 = jessie1SubTable.getDoubleArrayTopic("ClassIDs").subscribe(new double[0]);
-    //         DoubleArraySubscriber widthsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultWidths").subscribe(new double[0]);
-    //         DoubleArraySubscriber heightsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultHeights").subscribe(new double[0]);
-    //         // DoubleArraySubscriber angles = jessie1SubTable.getDoubleArrayTopic("ResultsAngles").subscribe(new double[0]); 
-    //         // not really important for a game where the pieces are spheres ^^^
-    //         DoubleArraySubscriber centerXsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultCenterXs").subscribe(new double[0]);
-    //         DoubleArraySubscriber centerYsSub1 = jessie1SubTable.getDoubleArrayTopic("ResultCenterYs").subscribe(new double[0]);
-            //===
+  //   DoubleSubscriber numResultsSub1 =
+  // jessie1SubTable.getDoubleTopic("NumberOfResults").subscribe(0.0);
+  //         DoubleArraySubscriber confidencesSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("Confidences").subscribe(new double[0]);
+  //         DoubleArraySubscriber class_idsSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("ClassIDs").subscribe(new double[0]);
+  //         DoubleArraySubscriber widthsSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("ResultWidths").subscribe(new double[0]);
+  //         DoubleArraySubscriber heightsSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("ResultHeights").subscribe(new double[0]);
+  //         // DoubleArraySubscriber angles =
+  // jessie1SubTable.getDoubleArrayTopic("ResultsAngles").subscribe(new double[0]);
+  //         // not really important for a game where the pieces are spheres ^^^
+  //         DoubleArraySubscriber centerXsSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("ResultCenterXs").subscribe(new double[0]);
+  //         DoubleArraySubscriber centerYsSub1 =
+  // jessie1SubTable.getDoubleArrayTopic("ResultCenterYs").subscribe(new double[0]);
+  // ===
 
   // Multipliers to apply for MegaTag 2 observations
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
-
 }

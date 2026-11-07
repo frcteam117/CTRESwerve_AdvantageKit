@@ -24,12 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
   private final VisionIO[] io;
@@ -37,7 +31,6 @@ public class Vision extends SubsystemBase {
   private final Alert[] disconnectedAlerts;
 
   //
-
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -143,19 +136,6 @@ public class Vision extends SubsystemBase {
         }
         //
         // object detection (fuel) inputs:
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // Send vision observation
         consumer.accept(
