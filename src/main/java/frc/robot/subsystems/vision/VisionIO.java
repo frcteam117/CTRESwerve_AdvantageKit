@@ -43,7 +43,13 @@ public interface VisionIO {
    * coords)
    */
   public static record TFLiteResult(
-      double conf, double class_id, double width, double height, double centerX, double centerY) {}
+      double conf,
+      double class_id,
+      double width,
+      double height,
+      double centerX,
+      double centerY,
+      double distFromRobot) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

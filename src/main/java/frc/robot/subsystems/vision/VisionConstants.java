@@ -18,9 +18,11 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "Jessie0";
-  public static String camera1Name = "Jessie1";
-  public static String camera2Name = "Jessie2";
+  public static String camera0Name = "Jessie0"; // thriftiestcam
+  public static String camera1Name = "Jessie1"; // thriftiestcam
+  public static String camera2Name = "Jessie2"; // thriftycam
+
+  public static final double fuelDiameter = 0.1500124; // in meters; in inches it's 5.906
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -30,6 +32,17 @@ public class VisionConstants {
   public static Transform3d robotToCamera1 =
       new Transform3d(0.265, -0.244, 0.220, new Rotation3d(0, Math.PI / 3, -Math.PI / 2));
   public static Transform3d robotToCamera2 = new Transform3d(); // NEED TO ADD
+
+  public static double[] cameraResolution = {640, 480}; // width, height in pixels;
+  // change if different cameras use different resolutions ok bestie :3
+
+  public static double camera0FocalLength = 0.0021; // in meters; mm=2.1; thriftiestcam
+  public static double camera1FocalLength = 0.0021; // in meters; mm=2.1; thriftiestcam
+  public static double camera2FocalLength = 0.0041; // in meters; mm=4.1; thriftycam
+
+  public static double camera0SensorDiameter = 0.014; // in meters; mm=14; thriftiestcam
+  public static double camera1SensorDiameter = 0.014; // in meters; mm=14; thriftiestcam
+  public static double camera2SensorDiameter = 0.014; // in meters; mm=14; thriftycam
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

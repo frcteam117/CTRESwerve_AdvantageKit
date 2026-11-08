@@ -12,6 +12,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -156,7 +157,8 @@ public class VisionIOPhotonVision implements VisionIO {
       }
 
       // object detection:
-      // if else bc camera 0 is dead and to separate the results by camera
+      // if else bc camera 0 is dead and to separate the results by camera. TODO: fix this system to
+      // not be separated by num pls
       if (camera.getName().equals("Jessie1")) {
         int numResults = (int) numResultsSub1.get();
         TFLiteResult[] results1 = new TFLiteResult[numResults];
@@ -164,17 +166,42 @@ public class VisionIOPhotonVision implements VisionIO {
         // declaring lists here to safe memory
         double[] confs = confidencesSub1.get();
         double[] class_ids = class_idsSub1.get();
-        double[] widths = widthsSub1.get();
-        double[] heights = heightsSub1.get();
-        double[] centerXs = centerXsSub1.get();
-        double[] centerYs = centerYsSub1.get();
+        double[] widths = widthsSub1.get(); // in image pixels
+        double[] heights = heightsSub1.get(); // in image pixels
+        double[] centerXs = centerXsSub1.get(); // in image pixel coords (top left = (0,0))
+        double[] centerYs = centerYsSub1.get(); // in image pixel coords
         for (int i = 0; i < numResultsSub1.get() - 1; i++) {
+          // calc distance from camera & robot center:
+          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+          double distFromCamera = 0.0;
+          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+          // should be the same for spheres
+          // dont know if correcting for that is good here, may implement l8r
+          // assuming no camera warping, fingers crossed
+          // distance formula: (using heights of everything, width could also be used)
+          distFromCamera =
+              (VisionConstants.camera1FocalLength * fuelDiameter * frameHeight)
+                  / (heights[i] * camera1SensorDiameter);
+
+          // gets the distance between the camera and the center of the robot
+          // (treating the center as 0,0 or the new translation3d)
+          double toRobot =
+              VisionConstants.robotToCamera1.getTranslation().getDistance(new Translation3d());
+          double distFromRobot = distFromCamera + toRobot;
           results1[i] =
               new TFLiteResult(
-                  confs[i], class_ids[i], widths[i], heights[i], centerXs[i], centerYs[i]);
+                  confs[i],
+                  class_ids[i],
+                  widths[i],
+                  heights[i],
+                  centerXs[i],
+                  centerYs[i],
+                  distFromRobot);
         }
-
         inputs.detectionResults_Jessie1 = results1;
+
       } else if (camera.getName().equals("Jessie2")) {
         int numResults = (int) numResultsSub2.get();
         TFLiteResult[] results2 = new TFLiteResult[numResults];
@@ -182,18 +209,44 @@ public class VisionIOPhotonVision implements VisionIO {
         // declaring lists here to safe memory
         double[] confs = confidencesSub2.get();
         double[] class_ids = class_idsSub2.get();
-        double[] widths = widthsSub2.get();
-        double[] heights = heightsSub2.get();
-        double[] centerXs = centerXsSub2.get();
-        double[] centerYs = centerYsSub2.get();
+        double[] widths = widthsSub2.get(); // in image pixels
+        double[] heights = heightsSub2.get(); // in image pixels
+        double[] centerXs = centerXsSub2.get(); // in image pixel coords (top left = (0,0))
+        double[] centerYs = centerYsSub2.get(); // in image pixel coords
         for (int i = 0; i < numResultsSub2.get() - 1; i++) {
+          // calc distance from camera & robot center:
+          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+          double distFromCamera = 0.0;
+          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+          // should be the same for spheres
+          // dont know if correcting for that is good here, may implement l8r
+          // assuming no camera warping, fingers crossed
+          // distance formula: (using heights of everything, width could also be used)
+          distFromCamera =
+              (VisionConstants.camera2FocalLength * fuelDiameter * frameHeight)
+                  / (heights[i] * camera2SensorDiameter);
+
+          // gets the distance between the camera and the center of the robot
+          // (treating the center as 0,0 or the new translation3d)
+          double toRobot =
+              VisionConstants.robotToCamera2.getTranslation().getDistance(new Translation3d());
+          double distFromRobot = distFromCamera + toRobot;
           results2[i] =
               new TFLiteResult(
-                  confs[i], class_ids[i], widths[i], heights[i], centerXs[i], centerYs[i]);
+                  confs[i],
+                  class_ids[i],
+                  widths[i],
+                  heights[i],
+                  centerXs[i],
+                  centerYs[i],
+                  distFromRobot);
         }
 
         inputs.detectionResults_Jessie2 = results2;
       }
+
       //
     }
 
