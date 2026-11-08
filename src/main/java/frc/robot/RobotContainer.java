@@ -30,7 +30,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -69,13 +68,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         vision =
             new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-                new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1) // ,
+                drive::addVisionMeasurement // ,
                 // new VisionIOPhotonVision(
-                //     VisionConstants.camera2Name, VisionConstants.robotToCamera2)
+                //    VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+                // new VisionIOPhotonVision(
+                //    VisionConstants.camera1Name, VisionConstants.robotToCamera1) // ,
+                // new VisionIOPhotonVision(
+                // VisionConstants.camera2Name, VisionConstants.robotToCamera2)
                 );
 
         // range = null;
@@ -176,8 +175,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
+            () -> -controller.getLeftY() * 0.8,
+            () -> -controller.getLeftX() * 0.8,
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
