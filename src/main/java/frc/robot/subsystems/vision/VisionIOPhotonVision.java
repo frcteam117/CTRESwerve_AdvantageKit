@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -89,163 +91,234 @@ public class VisionIOPhotonVision implements VisionIO {
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
-    for (var result : camera.getAllUnreadResults()) {
-      // Update latest target observation
-      if (result.hasTargets()) {
-        inputs.latestTargetObservation =
-            new TargetObservation(
-                Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-      } else {
-        inputs.latestTargetObservation = new TargetObservation(Rotation2d.kZero, Rotation2d.kZero);
-      }
+    // for object detection:
+    TFLiteResult[] results= new TFLiteResult[camera.getAllUnreadResults().size()];
+    int curNum = 0;
+    for (PhotonPipelineResult result : camera.getAllUnreadResults()) {
+        List<PhotonTrackedTarget> targetList = result.getTargets();
+        // inputs.latestTargetObservation =
+        //     new TargetObservation(
+        //         Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+        //         Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+        for (PhotonTrackedTarget target : targetList) {
+          // TODO: should this be changed to define everything once to save memory?
+          double boxWidth = 
+                Math.abs(target.getMinAreaRectCorners().get(0).x
+                - target.getMinAreaRectCorners().get(1).x);
+          double boxHeight = 
+                Math.abs(target.getMinAreaRectCorners().get(0).y
+                - target.getMinAreaRectCorners().get(2).y);
+          double centerX = 
+                (target.getMinAreaRectCorners().get(0).x
+                + target.getMinAreaRectCorners().get(1).x) / 2;
+          double centerY = 
+                (target.getMinAreaRectCorners().get(0).y
+                + target.getMinAreaRectCorners().get(2).y) / 2;
+          //
+          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+          double distFromCamera = 0.0;
+          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+          // should be the same for spheres
+          // dont know if correcting for that is good here, may implement l8r
+          // assuming no camera warping, fingers crossed
+          // distance formula: (using heights of everything, width could also be used)
+          double focalLength;
+          double sensorDiameter;
+          Transform3d robotToCamera;
+          boolean cameraIdentified = false;
+          if (camera.getName().equals(camera0Name)) {
+            focalLength = VisionConstants.camera0FocalLength;
+            sensorDiameter = VisionConstants.camera0SensorDiameter;
+            robotToCamera = VisionConstants.robotToCamera0;
+            cameraIdentified = true;
+          }
+          else if (camera.getName().equals(camera1Name)) {
+            focalLength = VisionConstants.camera1FocalLength;
+            sensorDiameter = VisionConstants.camera1SensorDiameter;
+            robotToCamera = VisionConstants.robotToCamera1;
+            cameraIdentified = true;
+          }
+          else if (camera.getName().equals(camera2Name)) {
+            focalLength = VisionConstants.camera2FocalLength;
+            sensorDiameter = VisionConstants.camera2SensorDiameter;
+            robotToCamera = VisionConstants.robotToCamera2;
+            cameraIdentified = true;
+          }
+          
+          if (cameraIdentified) {
+              distFromCamera =
+                  (focalLength * fuelDiameter * frameHeight)
+                      / (boxHeight * sensorDiameter);
+
+              // gets the distance between the camera and the center of the robot
+              // (treating the center as 0,0 or the new translation3d)f1
+              double toRobot =
+                  robotToCamera.getTranslation().getDistance(new Translation3d());
+              double distFromRobot = distFromCamera + toRobot;
+              
+              results[curNum] = 
+                    new TFLiteResult(
+                              target.getDetectedObjectConfidence(),
+                              target.getDetectedObjectClassID(),
+                              target.getPoseAmbiguity(),
+                              boxWidth,
+                              boxHeight,
+                              centerX,
+                              centerY,
+                              distFromRobot
+                    );
+              curNum += 1;  
+          }
+        }
 
       // Add pose observation
-      if (result.multitagResult.isPresent()) { // Multitag result
-        var multitagResult = result.multitagResult.get();
+      // if (result.multitagResult.isPresent()) { // Multitag result
+      //   var multitagResult = result.multitagResult.get();
+        
+      //   // Calculate robot pose
+      //   // Transform3d fieldToCamera = multitagResult.estimatedPose.best;
+      //   // Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+      //   // Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-        // Calculate robot pose
-        Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-        Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-        Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+      //   // Calculate average tag distance
+      //   // double totalTagDistance = 0.0;
+      //   // for (var target : result.targets) {
+      //   //   totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+      //   // }
 
-        // Calculate average tag distance
-        double totalTagDistance = 0.0;
-        for (var target : result.targets) {
-          totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-        }
+      //   // Add tag IDs
+      //   // tagIds.addAll(multitagResult.fiducialIDsUsed);
 
-        // Add tag IDs
-        tagIds.addAll(multitagResult.fiducialIDsUsed);
+      //   // Add observation
+      //   poseObservations.add(
+      //       new PoseObservation(
+      //           result.getTimestampSeconds(), // Timestamp
+      //           robotPose, // 3D pose estimate
+      //           multitagResult.estimatedPose.ambiguity, // Ambiguity
+      //           multitagResult.fiducialIDsUsed.size(), // Tag count
+      //           totalTagDistance / result.targets.size(), // Average tag distance
+      //           PoseObservationType.PHOTONVISION)); // Observation type
 
-        // Add observation
-        poseObservations.add(
-            new PoseObservation(
-                result.getTimestampSeconds(), // Timestamp
-                robotPose, // 3D pose estimate
-                multitagResult.estimatedPose.ambiguity, // Ambiguity
-                multitagResult.fiducialIDsUsed.size(), // Tag count
-                totalTagDistance / result.targets.size(), // Average tag distance
-                PoseObservationType.PHOTONVISION)); // Observation type
+      // } else if (!result.targets.isEmpty()) { // Single tag result
+      //   var target = result.targets.get(0);
 
-      } else if (!result.targets.isEmpty()) { // Single tag result
-        var target = result.targets.get(0);
+      //   // Calculate robot pose
+      //   var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
+      //   if (tagPose.isPresent()) {
+      //     Transform3d fieldToTarget =
+      //         new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
+      //     Transform3d cameraToTarget = target.bestCameraToTarget;
+      //     Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+      //     Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+      //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-        // Calculate robot pose
-        var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
-        if (tagPose.isPresent()) {
-          Transform3d fieldToTarget =
-              new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
-          Transform3d cameraToTarget = target.bestCameraToTarget;
-          Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-          Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-          Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+      //     // Add tag ID
+      //     tagIds.add((short) target.fiducialId);
 
-          // Add tag ID
-          tagIds.add((short) target.fiducialId);
-
-          // Add observation
-          poseObservations.add(
-              new PoseObservation(
-                  result.getTimestampSeconds(), // Timestamp
-                  robotPose, // 3D pose estimate
-                  target.poseAmbiguity, // Ambiguity
-                  1, // Tag count
-                  cameraToTarget.getTranslation().getNorm(), // Average tag distance
-                  PoseObservationType.PHOTONVISION)); // Observation type
-        }
-      }
+      //     // Add observation
+      //     poseObservations.add(
+      //         new PoseObservation(
+      //             result.getTimestampSeconds(), // Timestamp
+      //             robotPose, // 3D pose estimate
+      //             target.poseAmbiguity, // Ambiguity
+      //             1, // Tag count
+      //             cameraToTarget.getTranslation().getNorm(), // Average tag distance
+      //             PoseObservationType.PHOTONVISION)); // Observation type
+      //   }
+      // }
 
       // object detection:
       // if else bc camera 0 is dead and to separate the results by camera. TODO: fix this system to
       // not be separated by num pls
-      if (camera.getName().equals("Jessie1")) {
-        int numResults = (int) numResultsSub1.get();
-        TFLiteResult[] results1 = new TFLiteResult[numResults];
-        inputs.numDetections_Jessie1 = numResults;
-        // declaring lists here to safe memory
-        double[] confs = confidencesSub1.get();
-        double[] class_ids = class_idsSub1.get();
-        double[] widths = widthsSub1.get(); // in image pixels
-        double[] heights = heightsSub1.get(); // in image pixels
-        double[] centerXs = centerXsSub1.get(); // in image pixel coords (top left = (0,0))
-        double[] centerYs = centerYsSub1.get(); // in image pixel coords
-        for (int i = 0; i < numResultsSub1.get() - 1; i++) {
-          // calc distance from camera & robot center:
-          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
-          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
-          double distFromCamera = 0.0;
-          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
-          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
-          // should be the same for spheres
-          // dont know if correcting for that is good here, may implement l8r
-          // assuming no camera warping, fingers crossed
-          // distance formula: (using heights of everything, width could also be used)
-          distFromCamera =
-              (VisionConstants.camera1FocalLength * fuelDiameter * frameHeight)
-                  / (heights[i] * camera1SensorDiameter);
+      // if (camera.getName().equals("Jessie1")) {
+      //   int numResults = (int) numResultsSub1.get();
+      //   TFLiteResult[] results1 = new TFLiteResult[numResults];
+      //   inputs.numDetections_Jessie1 = numResults;
+      //   // declaring lists here to safe memory
+      //   double[] confs = confidencesSub1.get();
+      //   double[] class_ids = class_idsSub1.get();
+      //   double[] widths = widthsSub1.get(); // in image pixels
+      //   double[] heights = heightsSub1.get(); // in image pixels
+      //   double[] centerXs = centerXsSub1.get(); // in image pixel coords (top left = (0,0))
+      //   double[] centerYs = centerYsSub1.get(); // in image pixel coords
+      //   for (int i = 0; i < numResultsSub1.get() - 1; i++) {
+      //     // calc distance from camera & robot center:
+      //     double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+      //     double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+      //     double distFromCamera = 0.0;
+      //     double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+      //     // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+      //     // should be the same for spheres
+      //     // dont know if correcting for that is good here, may implement l8r
+      //     // assuming no camera warping, fingers crossed
+      //     // distance formula: (using heights of everything, width could also be used)
+      //     distFromCamera =
+      //         (VisionConstants.camera1FocalLength * fuelDiameter * frameHeight)
+      //             / (heights[i] * camera1SensorDiameter);
 
-          // gets the distance between the camera and the center of the robot
-          // (treating the center as 0,0 or the new translation3d)
-          double toRobot =
-              VisionConstants.robotToCamera1.getTranslation().getDistance(new Translation3d());
-          double distFromRobot = distFromCamera + toRobot;
-          results1[i] =
-              new TFLiteResult(
-                  confs[i],
-                  class_ids[i],
-                  widths[i],
-                  heights[i],
-                  centerXs[i],
-                  centerYs[i],
-                  distFromRobot);
-        }
-        inputs.detectionResults_Jessie1 = results1;
+      //     // gets the distance between the camera and the center of the robot
+      //     // (treating the center as 0,0 or the new translation3d)
+      //     double toRobot =
+      //         VisionConstants.robotToCamera1.getTranslation().getDistance(new Translation3d());
+      //     double distFromRobot = distFromCamera + toRobot;
+      //     results1[i] =
+      //         new TFLiteResult(
+      //             confs[i],
+      //             class_ids[i],
+      //             widths[i],
+      //             heights[i],
+      //             centerXs[i],
+      //             centerYs[i],
+      //             distFromRobot);
+      //   }
+      //   inputs.detectionResults_Jessie1 = results1;
 
-      } else if (camera.getName().equals("Jessie2")) {
-        int numResults = (int) numResultsSub2.get();
-        TFLiteResult[] results2 = new TFLiteResult[numResults];
-        inputs.numDetections_Jessie2 = numResults;
-        // declaring lists here to safe memory
-        double[] confs = confidencesSub2.get();
-        double[] class_ids = class_idsSub2.get();
-        double[] widths = widthsSub2.get(); // in image pixels
-        double[] heights = heightsSub2.get(); // in image pixels
-        double[] centerXs = centerXsSub2.get(); // in image pixel coords (top left = (0,0))
-        double[] centerYs = centerYsSub2.get(); // in image pixel coords
-        for (int i = 0; i < numResultsSub2.get() - 1; i++) {
-          // calc distance from camera & robot center:
-          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
-          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
-          double distFromCamera = 0.0;
-          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
-          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
-          // should be the same for spheres
-          // dont know if correcting for that is good here, may implement l8r
-          // assuming no camera warping, fingers crossed
-          // distance formula: (using heights of everything, width could also be used)
-          distFromCamera =
-              (VisionConstants.camera2FocalLength * fuelDiameter * frameHeight)
-                  / (heights[i] * camera2SensorDiameter);
+      // } else if (camera.getName().equals("Jessie2")) {
+      //   int numResults = (int) numResultsSub2.get();
+      //   TFLiteResult[] results2 = new TFLiteResult[numResults];
+      //   inputs.numDetections_Jessie2 = numResults;
+      //   // declaring lists here to safe memory
+      //   double[] confs = confidencesSub2.get();
+      //   double[] class_ids = class_idsSub2.get();
+      //   double[] widths = widthsSub2.get(); // in image pixels
+      //   double[] heights = heightsSub2.get(); // in image pixels
+      //   double[] centerXs = centerXsSub2.get(); // in image pixel coords (top left = (0,0))
+      //   double[] centerYs = centerYsSub2.get(); // in image pixel coords
+      //   for (int i = 0; i < numResultsSub2.get() - 1; i++) {
+      //     // calc distance from camera & robot center:
+      //     double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+      //     double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+      //     double distFromCamera = 0.0;
+      //     double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+      //     // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+      //     // should be the same for spheres
+      //     // dont know if correcting for that is good here, may implement l8r
+      //     // assuming no camera warping, fingers crossed
+      //     // distance formula: (using heights of everything, width could also be used)
+      //     distFromCamera =
+      //         (VisionConstants.camera2FocalLength * fuelDiameter * frameHeight)
+      //             / (heights[i] * camera2SensorDiameter);
 
-          // gets the distance between the camera and the center of the robot
-          // (treating the center as 0,0 or the new translation3d)
-          double toRobot =
-              VisionConstants.robotToCamera2.getTranslation().getDistance(new Translation3d());
-          double distFromRobot = distFromCamera + toRobot;
-          results2[i] =
-              new TFLiteResult(
-                  confs[i],
-                  class_ids[i],
-                  widths[i],
-                  heights[i],
-                  centerXs[i],
-                  centerYs[i],
-                  distFromRobot);
-        }
+      //     // gets the distance between the camera and the center of the robot
+      //     // (treating the center as 0,0 or the new translation3d)
+      //     double toRobot =
+      //         VisionConstants.robotToCamera2.getTranslation().getDistance(new Translation3d());
+      //     double distFromRobot = distFromCamera + toRobot;
+      //     results2[i] =
+      //         new TFLiteResult(
+      //             confs[i],
+      //             class_ids[i],
+      //             widths[i],
+      //             heights[i],
+      //             centerXs[i],
+      //             centerYs[i],
+      //             distFromRobot);
+      //   }
 
-        inputs.detectionResults_Jessie2 = results2;
-      }
+      //   inputs.detectionResults_Jessie2 = results2;
+      // }
 
       //
     }
