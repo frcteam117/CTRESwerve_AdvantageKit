@@ -81,6 +81,7 @@ public class VisionIOPhotonVision implements VisionIO {
   public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
     camera = new PhotonCamera(name);
     this.robotToCamera = robotToCamera;
+    camera.setFPSLimit(10);
   }
 
   @Override
@@ -112,8 +113,7 @@ public class VisionIOPhotonVision implements VisionIO {
         double centerY =
             (target.getMinAreaRectCorners().get(0).y + target.getMinAreaRectCorners().get(2).y) / 2;
         //
-        double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
-        double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+
         double distFromCamera = 0.0;
         double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
         // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
@@ -123,28 +123,35 @@ public class VisionIOPhotonVision implements VisionIO {
         // distance formula: (using heights of everything, width could also be used)
         double focalLength;
         double sensorDiameter;
+        double[] resolution;
         Transform3d robotToCamera;
         boolean cameraIdentified = false;
         if (camera.getName().equals(camera0Name)) {
           focalLength = VisionConstants.camera0FocalLength;
           sensorDiameter = VisionConstants.camera0SensorDiameter;
           robotToCamera = VisionConstants.robotToCamera0;
+          resolution = VisionConstants.camera0Resolution;
           cameraIdentified = true;
         } else if (camera.getName().equals(camera1Name)) {
           focalLength = VisionConstants.camera1FocalLength;
           sensorDiameter = VisionConstants.camera1SensorDiameter;
           robotToCamera = VisionConstants.robotToCamera1;
+          resolution = VisionConstants.camera1Resolution;
           cameraIdentified = true;
         } else if (camera.getName().equals(camera2Name)) {
           focalLength = VisionConstants.camera2FocalLength;
           sensorDiameter = VisionConstants.camera2SensorDiameter;
+          resolution = camera2Resolution;
           robotToCamera = VisionConstants.robotToCamera2;
           cameraIdentified = true;
         } else {
           focalLength = -1;
           sensorDiameter = -1;
           robotToCamera = new Transform3d();
+          resolution = VisionConstants.camera0Resolution;
         }
+        double frameWidth = resolution[0]; // in pixels
+        double frameHeight = resolution[1]; // in pixels
 
         if (cameraIdentified && focalLength != -1) {
           distFromCamera =
