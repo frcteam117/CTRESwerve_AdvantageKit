@@ -9,14 +9,13 @@ package frc.robot.subsystems.vision;
 
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,95 +91,93 @@ public class VisionIOPhotonVision implements VisionIO {
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     // for object detection:
-    TFLiteResult[] results= new TFLiteResult[camera.getAllUnreadResults().size()];
+    List<TFLiteResult> results = new ArrayList<>();
     int curNum = 0;
     for (PhotonPipelineResult result : camera.getAllUnreadResults()) {
-        List<PhotonTrackedTarget> targetList = result.getTargets();
-        // inputs.latestTargetObservation =
-        //     new TargetObservation(
-        //         Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-        //         Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-        for (PhotonTrackedTarget target : targetList) {
-          // TODO: should this be changed to define everything once to save memory?
-          double boxWidth = 
-                Math.abs(target.getMinAreaRectCorners().get(0).x
-                - target.getMinAreaRectCorners().get(1).x);
-          double boxHeight = 
-                Math.abs(target.getMinAreaRectCorners().get(0).y
-                - target.getMinAreaRectCorners().get(2).y);
-          double centerX = 
-                (target.getMinAreaRectCorners().get(0).x
-                + target.getMinAreaRectCorners().get(1).x) / 2;
-          double centerY = 
-                (target.getMinAreaRectCorners().get(0).y
-                + target.getMinAreaRectCorners().get(2).y) / 2;
-          //
-          double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
-          double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
-          double distFromCamera = 0.0;
-          double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
-          // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
-          // should be the same for spheres
-          // dont know if correcting for that is good here, may implement l8r
-          // assuming no camera warping, fingers crossed
-          // distance formula: (using heights of everything, width could also be used)
-          double focalLength;
-          double sensorDiameter;
-          Transform3d robotToCamera;
-          boolean cameraIdentified = false;
-          if (camera.getName().equals(camera0Name)) {
-            focalLength = VisionConstants.camera0FocalLength;
-            sensorDiameter = VisionConstants.camera0SensorDiameter;
-            robotToCamera = VisionConstants.robotToCamera0;
-            cameraIdentified = true;
-          }
-          else if (camera.getName().equals(camera1Name)) {
-            focalLength = VisionConstants.camera1FocalLength;
-            sensorDiameter = VisionConstants.camera1SensorDiameter;
-            robotToCamera = VisionConstants.robotToCamera1;
-            cameraIdentified = true;
-          }
-          else if (camera.getName().equals(camera2Name)) {
-            focalLength = VisionConstants.camera2FocalLength;
-            sensorDiameter = VisionConstants.camera2SensorDiameter;
-            robotToCamera = VisionConstants.robotToCamera2;
-            cameraIdentified = true;
-          }
-          
-          if (cameraIdentified) {
-              distFromCamera =
-                  (focalLength * fuelDiameter * frameHeight)
-                      / (boxHeight * sensorDiameter);
-
-              // gets the distance between the camera and the center of the robot
-              // (treating the center as 0,0 or the new translation3d)f1
-              double toRobot =
-                  robotToCamera.getTranslation().getDistance(new Translation3d());
-              double distFromRobot = distFromCamera + toRobot;
-              
-              results[curNum] = 
-                    new TFLiteResult(
-                              target.getDetectedObjectConfidence(),
-                              target.getDetectedObjectClassID(),
-                              target.getPoseAmbiguity(),
-                              boxWidth,
-                              boxHeight,
-                              centerX,
-                              centerY,
-                              distFromRobot
-                    );
-              curNum += 1;  
-          }
+      List<PhotonTrackedTarget> targetList = result.getTargets();
+      // inputs.latestTargetObservation =
+      //     new TargetObservation(
+      //         Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+      //         Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+      for (PhotonTrackedTarget target : targetList) {
+        // TODO: should this be changed to define everything once to save memory?
+        double boxWidth =
+            Math.abs(
+                target.getMinAreaRectCorners().get(0).x - target.getMinAreaRectCorners().get(1).x);
+        double boxHeight =
+            Math.abs(
+                target.getMinAreaRectCorners().get(0).y - target.getMinAreaRectCorners().get(2).y);
+        double centerX =
+            (target.getMinAreaRectCorners().get(0).x + target.getMinAreaRectCorners().get(1).x) / 2;
+        double centerY =
+            (target.getMinAreaRectCorners().get(0).y + target.getMinAreaRectCorners().get(2).y) / 2;
+        //
+        double frameWidth = VisionConstants.cameraResolution[0]; // in pixels
+        double frameHeight = VisionConstants.cameraResolution[1]; // in pixels
+        double distFromCamera = 0.0;
+        double fuelDiameter = VisionConstants.fuelDiameter; // works as height here
+        // double avgLength = (widths[i] + heights[i]) / 2; // avg of length & width bc they
+        // should be the same for spheres
+        // dont know if correcting for that is good here, may implement l8r
+        // assuming no camera warping, fingers crossed
+        // distance formula: (using heights of everything, width could also be used)
+        double focalLength;
+        double sensorDiameter;
+        Transform3d robotToCamera;
+        boolean cameraIdentified = false;
+        if (camera.getName().equals(camera0Name)) {
+          focalLength = VisionConstants.camera0FocalLength;
+          sensorDiameter = VisionConstants.camera0SensorDiameter;
+          robotToCamera = VisionConstants.robotToCamera0;
+          cameraIdentified = true;
+        } else if (camera.getName().equals(camera1Name)) {
+          focalLength = VisionConstants.camera1FocalLength;
+          sensorDiameter = VisionConstants.camera1SensorDiameter;
+          robotToCamera = VisionConstants.robotToCamera1;
+          cameraIdentified = true;
+        } else if (camera.getName().equals(camera2Name)) {
+          focalLength = VisionConstants.camera2FocalLength;
+          sensorDiameter = VisionConstants.camera2SensorDiameter;
+          robotToCamera = VisionConstants.robotToCamera2;
+          cameraIdentified = true;
+        } else {
+          focalLength = -1;
+          sensorDiameter = -1;
+          robotToCamera = new Transform3d();
         }
+
+        if (cameraIdentified && focalLength != -1) {
+          distFromCamera =
+              (focalLength * fuelDiameter * frameHeight) / (boxHeight * sensorDiameter);
+
+          // gets the distance between the camera and the center of the robot
+          // (treating the center as 0,0 or the new translation3d)f1
+          double toRobot = robotToCamera.getTranslation().getDistance(new Translation3d());
+          double distFromRobot = distFromCamera + toRobot;
+
+          results.add(
+              new TFLiteResult(
+                  target.getDetectedObjectConfidence(),
+                  target.getDetectedObjectClassID(),
+                  target.getPoseAmbiguity(),
+                  boxWidth,
+                  boxHeight,
+                  centerX,
+                  centerY,
+                  distFromRobot));
+          curNum += 1;
+        }
+      }
 
       // Add pose observation
       // if (result.multitagResult.isPresent()) { // Multitag result
       //   var multitagResult = result.multitagResult.get();
-        
+
       //   // Calculate robot pose
       //   // Transform3d fieldToCamera = multitagResult.estimatedPose.best;
       //   // Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-      //   // Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+      //   // Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(),
+      // fieldToRobot.getRotation());
 
       //   // Calculate average tag distance
       //   // double totalTagDistance = 0.0;
@@ -212,7 +209,8 @@ public class VisionIOPhotonVision implements VisionIO {
       //     Transform3d cameraToTarget = target.bestCameraToTarget;
       //     Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
       //     Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-      //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+      //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(),
+      // fieldToRobot.getRotation());
 
       //     // Add tag ID
       //     tagIds.add((short) target.fiducialId);
@@ -324,16 +322,19 @@ public class VisionIOPhotonVision implements VisionIO {
     }
 
     // Save pose observations to inputs object
-    inputs.poseObservations = new PoseObservation[poseObservations.size()];
-    for (int i = 0; i < poseObservations.size(); i++) {
-      inputs.poseObservations[i] = poseObservations.get(i);
+    // inputs.poseObservations = new PoseObservation[poseObservations.size()];
+    // for (int i = 0; i < poseObservations.size(); i++) {
+    //   inputs.poseObservations[i] = poseObservations.get(i);
+    // }
+    inputs.detectionResults = new TFLiteResult[results.size()];
+    for (int i = 0; i < results.size(); i++) {
+      inputs.detectionResults[i] = results.get(i);
     }
-
-    // Save tag IDs to inputs objects
-    inputs.tagIds = new int[tagIds.size()];
-    int i = 0;
-    for (int id : tagIds) {
-      inputs.tagIds[i++] = id;
-    }
+    // // Save tag IDs to inputs objects
+    // inputs.tagIds = new int[tagIds.size()];
+    // int i = 0;
+    // for (int id : tagIds) {
+    //   inputs.tagIds[i++] = id;
+    // }
   }
 }

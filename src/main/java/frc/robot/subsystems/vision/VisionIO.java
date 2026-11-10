@@ -41,8 +41,8 @@ public interface VisionIO {
       double averageTagDistance,
       PoseObservationType type) {}
   /**
-   * a TFLite result: confidence, class id, ambiguity, width, height (screen coords), centerX, centerY (screen
-   * coords)
+   * a TFLite result: confidence, class id, ambiguity, width, height (screen coords), centerX,
+   * centerY (screen coords)
    */
   public static record TFLiteResult(
       double conf,
