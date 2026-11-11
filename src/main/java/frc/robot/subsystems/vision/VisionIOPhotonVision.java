@@ -171,6 +171,7 @@ public class VisionIOPhotonVision implements VisionIO {
                   boxHeight,
                   centerX,
                   centerY,
+                  distFromCamera,
                   distFromRobot));
           curNum += 1;
         }

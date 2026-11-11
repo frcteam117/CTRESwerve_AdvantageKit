@@ -52,6 +52,7 @@ public interface VisionIO {
       double boxHeight,
       double centerX,
       double centerY,
+      double distFromCamera,
       double distFromRobot) {}
 
   public static enum PoseObservationType {
