@@ -24,6 +24,8 @@ public class VisionConstants {
 
   public static final double fuelDiameter = 0.1500124; // in meters; in inches it's 5.906
 
+  public static final double estimatedDistanceRatio = 6.5;
+
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   // in meters
@@ -31,9 +33,8 @@ public class VisionConstants {
       new Transform3d(0.292, 0.252, 0.220, new Rotation3d(0, Math.PI / 3, Math.toRadians(180)));
   public static Transform3d robotToCamera1 =
       new Transform3d(0.265, -0.244, 0.220, new Rotation3d(0, Math.PI / 3, -Math.PI / 2));
-  public static Transform3d robotToCamera2 =  // ESTIMATE:
-              new Transform3d(-0.292, 0.252, 0.220, new Rotation3d(0, Math.PI / 4, Math.toRadians(45)));
-
+  public static Transform3d robotToCamera2 = // ESTIMATE:
+      new Transform3d(-0.292, 0.252, 0.220, new Rotation3d(0, Math.PI / 4, Math.toRadians(45)));
 
   public static double[] camera0Resolution = {640, 480}; // width, height in pixels;
   public static double[] camera1Resolution = {800, 600}; // width, height in pixels;

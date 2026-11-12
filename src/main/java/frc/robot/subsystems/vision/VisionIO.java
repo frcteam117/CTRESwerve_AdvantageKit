@@ -53,7 +53,8 @@ public interface VisionIO {
       double centerX,
       double centerY,
       double distFromCamera,
-      double distFromRobot) {}
+      double distFromRobot,
+      double sideOfScreen) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

@@ -153,9 +153,14 @@ public class VisionIOPhotonVision implements VisionIO {
         double frameWidth = resolution[0]; // in pixels
         double frameHeight = resolution[1]; // in pixels
 
+        double sideOfScreen =  centerX < (frameWidth / 2) ? -1 : 1;// -1= left; 1 = right
+
+        double var = (1>2) ? 0 : 2;
+
         if (cameraIdentified && focalLength != -1) {
           distFromCamera =
-              (focalLength * fuelDiameter * frameHeight) / (boxHeight * sensorDiameter);
+              (focalLength * fuelDiameter * frameHeight) / (boxHeight * sensorDiameter) * VisionConstants.estimatedDistanceRatio;
+              // Math.tan(cameraAngle + objectAngle) = (objectHeight - cameraHeight) / horizontalDistance
 
           // gets the distance between the camera and the center of the robot
           // (treating the center as 0,0 or the new translation3d)f1
@@ -172,7 +177,8 @@ public class VisionIOPhotonVision implements VisionIO {
                   centerX,
                   centerY,
                   distFromCamera,
-                  distFromRobot));
+                  distFromRobot,
+                  sideOfScreen));
           curNum += 1;
         }
       }
